@@ -1,0 +1,74 @@
+<div class='le'>
+  <form class='row box-element' method="POST" action="{% url 'search'%}"  id='homeForm'>
+    {% csrf_token %}
+    <div class='col-md-3'>
+      <input type="text" name="tinh" class="form-control g1" id="search_tinh_id" placeholder="Bạn muốn đến đâu?">
+    </div>
+    <div class=' col-md-3'>
+      <div class='g2'>
+        <label for="check-in">Ngày nhận phòng:</label>
+        <input onclick="setdate()"  type="datetime-local" id="check-in" name="check-in" min="<?php echo date('Y-m-d'); ?>" required>
+      </div>
+    </div>
+    <div class='col-md-3'>
+      <div >
+        <label for="check-out">Ngày trả phòng:</label>
+        <input onclick="setdate()" type="datetime-local" id="check-out" name="check-out" min="<?php echo date('Y-m-d'); ?>" required>
+      </div>
+      
+    </div>
+    <div class='col-md-2 '>
+      <button class="uitk-button uitk-button-medium bg-white text-black g3" name='soluong' id="guestCountButton"  type="button" aria-expanded="false" aria-label="Chọn số khách, số phòng" >
+        1 khách, 1 phòng
+      </button>
+      <div class= 'dropdown-menu' id="guestCountDropdown" style="display: none;" aria-hidden="true">
+        <div>
+          <div class='row'>
+            <div class='col'>
+              <a class="dropdown-item" href="#">Người lớn</a>
+            </div>
+            <div class='col'>
+              <div class='boxm'>
+                <button class='btn_a' type="button" onclick="decrementValue('adult')">-</button>
+                <input class='vao' value='1'id="adultCount">
+                <button class='btn_a' type="button" onclick="incrementValue('adult')">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class='row'>
+            <div class='col'>
+              <a class="dropdown-item" href="#">Trẻ em</a>
+            </div>
+            <div class='col'>
+              <div class='boxm'>
+                <button class='btn_a' type="button" onclick="decrementValue('child')">-</button>
+                <input class='vao' value='0' id="childCount">
+                <button class='btn_a' type="button" onclick="incrementValue('child')">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class='row'>
+            <div class='col'>
+              <a class="dropdown-item" href="#">Phòng</a>
+            </div>
+            <div class='col'>
+              <div class='boxm'>
+                <button class='btn_a' type="button" onclick="decrementValue('room')">-</button>
+                <input class='vao' value='1' id="roomCount">
+                <button class='btn_a' type="button"onclick="incrementValue('room')">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn_ht" type='button'  id="doneButton">Xong</button>
+      </div>
+    </div>
+    <div class='col-md-1'>
+      <input class='g3 search 'id="timkiem" type="submit" value="Tìm">
+    </div>
+  </form>
+</div>

@@ -1,0 +1,150 @@
+/* Thiết lập font chữ mặc định */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* CSS cho lớp 'kcm' */
+.kcm {
+    background-color: #f5f5f5;
+    padding: 20px;
+    text-align: center;
+}
+
+.kcm a {
+    font-size: 18px;
+}
+
+/* CSS cho lớp 'le' */
+.le {
+    padding: 20px;
+}
+
+/* CSS cho nút 'Tìm' */
+.g4 {
+    background-color: #007BFF;
+    color: white;
+}
+
+.g4:hover {
+    background-color: #0056b3;
+}
+
+/* CSS cho checkbox */
+.form-check-input {
+    margin-right: 10px;
+}
+
+/* CSS cho lớp 'l kkp' */
+.l.kkp {
+    margin-top: 20px;
+    background-color: #f5f5f5;
+    padding: 20px;
+    text-align: center;
+}
+
+.l.kkp a {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* CSS cho lớp 'le tren' */
+.le.tren {
+    padding: 20px;
+    text-align: center;
+}
+
+.le.tren h3 {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* CSS cho các hình ảnh và overlay */
+.container {
+    position: relative;
+}
+
+.text-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #007BFF;
+    color: rgb(255, 246, 246);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* CSS cho nút kéo hình ảnh */
+.round-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/* CSS cho nút kéo hình ảnh bên phải */
+.round-button.l-r {
+    transform: rotate(180deg);
+}
+
+/* CSS cho hình ảnh cuối tuần */
+.card.col {
+    margin-right: 10px;
+}
+
+.card.col:last-child {
+    margin-right: 0;
+}
+
+
+/* CSS cho lớp 'boxm2' */
+.boxm2 {
+    padding: 20px;
+}
+
+.anhgt {
+    max-width: 100%;
+    height: auto;
+}
+
+.anhqr {
+    max-width: 100%;
+    height: auto;
+}
+
+/* CSS cho phần cuối trang */
+.textm1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.text-bg-dark {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.card-img {
+    object-fit: cover;
+}
+
+.textend {
+    text-align: center;
+    padding: 20px;
+}
+
+/* CSS cho phần chân trang */
+.textend b {
+    font-weight: bold;
+}
+
+/* CSS cho thẻ p trong phần chân trang */
+.textend p {
+    margin: 0;
+}
+
+/* CSS cho thẻ h6 */
+h6 {
+    margin: 5px 0;
+}

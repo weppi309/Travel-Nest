@@ -1,0 +1,88 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% comment %} {% load humanize %} {% endcomment %}
+
+{% block content %}
+{% include "app/blocktimkiem.html" %}
+<div class='row l kkp'>
+  <a>Khám phá thêm trong năm 2023. Bạn sớm đăng nhập để có những khuyến mãi hấp dẫn.</a>
+  <a class='bd' >Bắt đầu nào</a>
+</div>
+
+    <div class='le tren'>
+        <h3><strong> Địa điểm đang thịnh hành</strong></h3>
+        <p>Du lịch để tận hưởng vẻ đẹp thiên nhiên, văn hóa đa dạng </p>
+        <div class= 'row'>
+          {% for top2 in top_2_tinhs  %}
+            <div class="container-1">
+                <div class='text-overlay'><b>{{top2.tentinh}}</b></div>
+                <a class="tinh-item" data-tinh-id="{{ top2.id }}" data-tinh-name="{{ top2.tentinh }}"><img class="thumbnail" src="{{top2.anhtinh.url}} "></a>
+            </div>
+          {% endfor %}
+        </div>
+        <div class= 'row t' >
+            {% for top3 in top_3_tinhs  %}
+            <div class=" container1">
+                <div class='text-overlay'><b>{{top3.tentinh}}</b></div>
+                <a class="tinh-item" data-tinh-id="{{ top3.id }}" data-tinh-name="{{ top3.tentinh }}"><img class="thumbnail1" src="{{top3.anhtinh.url}} "></a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+<div class='le tren'>
+  <h3><strong>Khám phá Việt Nam</strong></h3>
+  <p>Cuộc hành trình tuyệt vời để tham quan và khám phá vẻ đẹp tự nhiên của quê hương</p>
+  <div class='row'>
+    <button id="prev"><</button>
+    <div class="image-slider">
+      <div class="image-list" id="image-list">
+        {% for tinh in tinh_data %}
+        <div class="tinh-item" data-tinh-id="{{ tinh.id }}" data-tinh-name="{{ tinh.tentinh }}">
+            <img class="image" src="{{ tinh.anhtinh.url }}" alt="{{ tinh.tentinh }}">
+            <h6><strong>{{ tinh.tentinh }}</strong></h6>
+            <h6>{{ tinh.num_hotels }} chỗ nghỉ</h6>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <button id="next">></button>
+  </div>
+</div>
+
+<div class='l tren'>
+  <h3><strong>Ưu đãi cuối tuần</strong></h3>
+  <p>Với mức giá ưu đãi hấp dẫn, tiết kiệm</p>
+  <div class='row'>
+    <button class='btn_pn' id="prev2"><</button>
+    <div class="image-slider1">
+      <div class="image-list" id="image-list2">
+        {% for tinh in tinh_data %}
+        <div class="card col card_w trai" >
+          <a href="{%url 'ks'%}?khachsan_id={{tinh.khachsan_set.first.id}}"><img src="{{tinh.khachsan_set.first.anhkhachsan_set.first.anhks.url}}" class="card-img-top" alt="..." height='200px'></a>
+          <div class="card-body">
+            <p class="card-text">{{tinh.khachsan_set.first.diem_trung_binh}}/10 {{tinh.khachsan_set.first.get_danh_gia_tb}}</p>
+            <h5 class="card-title">{{tinh.khachsan_set.first.tenkhachsan}}</h5>
+            <a>{{tinh.tentinh}}</a>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"> 
+              <a>{{tinh.khachsan_set.first.phong_set.first.giaphong}} VND</a></br>
+              <h6>Mỗi đêm</h6>
+            </li>
+            <li class="list-group-item">Không phụ thu</li>
+            <li class="list-group-item">Không thuế</li>
+          </ul>
+          <div class='card-body ks-item' data-ks-id="{{ tinh.khachsan_set.first.id }}">
+            <button class='btntim'>Tìm phòng</button></a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <button id="next2">></button>
+  </div>
+</div>
+</br>
+{% endblock content %}

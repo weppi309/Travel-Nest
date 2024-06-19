@@ -1,0 +1,49 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+{% include "app/blocktimkiem.html" %}
+<div class='l'>
+  <a class='t-link' href="{% url 'home'%}">Trang chủ </a>
+  <span> > </span>
+  <a class='t-link' href="#">{{tinh}}</a>
+  <span> > </span>
+  <a>Kết quả tìm kiếm</a>
+</div>
+<div class='le'>
+  <h3>{{tinh}}: Tìm thấy {{khachsans.count}} chỗ nghỉ</h3>
+  {% for khachsan in khachsans  %}
+  <div class='box ks-item' data-ks-id="{{ khachsan.id }}" data-ks-name="{{ khachsan.tenkhachsan }}"> 
+      <div class='row'>
+        <div class="col-sm-3 image-container">
+            <img class="thumbnail4" src="{{khachsan.anhkhachsan.url}}">
+            <a href="#" class="heart"><img src="{% static 'app/images/heart1.png' %}"></a>
+        </div>
+        <div class="col-sm-6">
+            <h3><strong>{{khachsan.tenkhachsan}}</strong></h3>
+            <div>
+                <a><h6>{{khachsan.diachi}}</h6></a>
+                <h6>{{khachsan.mota}}</h6>
+            </div>
+                <h4><strong>{{ khachsan.phong_set.first.loaiphong.tenloaiphong}}</strong></h4>
+                <h6>* {{khachsan.phong_set.first.loaigiuong}}</h6>
+                <h6>* {{khachsan.phong_set.first.mota}}</h6></br>
+          </div>
+          <div class="col-sm-3 container4">
+            <div class='nd'>
+                <div >
+                    <h5><strong>{{khachsan.get_danh_gia_tb}}<strong></h5>
+                    <h6 >{{khachsan.sum_danh_gia}} đánh giá</h6>
+                </div>
+                <button>{{khachsan.diem_trung_binh}}</button>
+                </div>
+              <div class='bottom-right'>
+                  <h6>1 đêm, {{khachsan.phong_set.first.soluongnguoi}} người</h6>
+                  <h3>{{khachsan.phong_set.first.giaphong}} VND</h3>
+                  <button class='btn_trong'>Xem chỗ trống > </button></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,88 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+<div class='l '>
+    <a href="#" onclick="goBack();"><img class='icon-back' src='{% static 'app/images/icon/back.png' %}'></img></a>
+    {% for hoadon in hoadons %}
+        <div class='top1'>
+            <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
+            <p>Ngày đặt: {{ hoadon.ngay_gio_dat }}</p>
+            <!-- Thêm các thông tin khác của hóa đơn ở đây -->
+            {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
+            <ul>
+                <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
+                <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
+                <li id= 'phong'>Phòng: {{ chitiethoadon.phong.loaiphong.tenloaiphong }}</li>
+                <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
+                <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
+                <li>Tổng tiền: {{ chitiethoadon.total_tien|floatformat:2|intcomma}}</li>  
+            </ul>
+            <div class="d-flex justify-content-left">
+                <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}">
+                    Đánh giá
+                </button>
+                
+            </div>
+            {% endfor %} 
+        </div>
+    {% endfor %}
+    <form method='POST' action="">
+        {% csrf_token %}
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Đánh giá khách sạn</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="phong_id">
+                    <div>
+                        <h3>Mức điểm:</h3>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="10" checked>
+                            <label class="form-check-label" for="exampleRadios1" >
+                            10
+                            </label>
+                            <label> (Tuyệt vời)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="8">
+                            <label class="form-check-label" for="exampleRadios2" >
+                            8
+                            </label>
+                            <label>(Tốt)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="7">
+                            <label class="form-check-label" for="exampleRadios3" >
+                            7
+                            </label>
+                            <label>(Tạm ổn)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4" value="5">
+                            <label class="form-check-label" for="exampleRadios4" >
+                            5
+                            </label>
+                            <label>(Không tốt)</label>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Bình luận:</h3>
+                        <textarea class="form-control" name='binhluan' id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
+    
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <input type="submit"  class="btn btn-primary" value="Lưu đánh giá">
+                </div>
+            </div>
+            </div>
+        </div>
+    </form>
+
+</div> 
+<br></br></br></br></br></br></br>
+{% endblock content %}

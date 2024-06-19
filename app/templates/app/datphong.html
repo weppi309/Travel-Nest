@@ -1,0 +1,261 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+<div class='l '>
+    <a href="#" onclick="goBack();"><img class='icon-back' src='{% static 'app/images/icon/back.png' %}'></img></a>
+        
+    <div class="row">
+        <div class="boxtt">
+            <h4>Ảnh phòng</h4>
+            <div id="carouselExample{{ forloop.counter }}" class="carousel slide">
+                {% comment %} <div class="carousel-inner">
+                    {% for anh in anh_phong %}
+                        {% if forloop.first %}
+                            <div class="carousel-item active">
+                        {% else %}
+                            <div class="carousel-item">
+                        {% endif %}
+                        <img src="{{ anh.anhphong.url }}" alt="{{ phong.tenphong }}" class="card-img-top" height="500px">
+                    </div>
+                    {% endfor %}
+                </div> {% endcomment %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+        
+        <div class='row'>
+            <div class='col-6 col-md-4'>            
+                <div class='boxtt top' >                    
+                    <h4>
+                        {{ten_ks}}
+                    </h4>                    
+                    <p>{{ten_tinh}}</p>
+                    <div class='row'>
+                        <div class='col-sm-2'>
+                            <button class='diem'>{{diemtb_danhgia}}</button>
+                        </div>
+                        <div class='col'>
+                            <a>{{tendiem_tb}} - {{tong_danhgia}} đánh giá </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="boxtt top">
+                    <h4>Tiện nghi của phòng</h4>
+                    <ul>
+                        {% for tien_nghi in tien_nghi_list %}
+                            <li>
+                                {% comment %} <img src="{{ tien_nghi.icon.url }}" alt="{{ tien_nghi.tentiennghi }}" class="icon"> <!-- Hiển thị icon --> {% endcomment %}
+                                {{ tien_nghi.tentiennghi }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class='boxtt top' >
+                    <h4>
+                        Chi tiết nhận phòng
+                    </h4>
+                    <div class='row'>
+                        <div class='col'>
+                            <h6>Nhận phòng</h6>
+                            <h6>{{ngay_gio_nhan}}</h6>
+                        </div>
+                        <div class='col'>
+                            <h6 >Trả phòng</h6>
+                            <h6>{{ngay_gio_tra}}</h6>   
+                        </div>
+                    </div>
+                    <a><strong>Tổng thời gian lưu trú:</strong></a></br>
+                    <h6>{{so_dem}} đêm</h6>
+                </div>
+                <div class='boxtt top' >
+                    <h4>
+                        Tóm tắc giá
+                    </h4>
+                    <div class='row'>
+                        <div class='col'>
+                            <a>Giá gốc</a><br>
+                            <a>Ưu đãi</a>
+                        </div>
+                        <div class='col'>
+                            <a>{{dongia}} VND </a></br>
+                            <a>0.000 VND</a>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class='col'>
+                            <h4 class='tong'>Tổng cộng</h4>
+                        </div>
+                        <div class='col'>
+                            
+                            <h4>{{total}} VND</h4>
+                            <a style='color:blue'>Đã bao gồm thuế</a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class='boxtt top' >
+                    <h4>
+                        Lịch thanh toán của bạn
+                    </h4>
+                    <h6>Không cần thanh toán hôm nay. Bạn sẽ trả khi đến nghỉ.</h6>
+                </div>
+                <div class='boxtt top' >
+                    <h4>
+                        Chi phí hủy phòng bao nhiêu ?
+                    </h4>
+                    <a>Hủy trước ngày:  {{ngay_gio_nhan}}</a><br>
+                    <div class='row'>
+                        <div class='col'>
+                            <a>Mức phí khi hủy: </a>
+                        </div>
+                        <div class='col'>
+                            <a>400.000 VND</a>
+                        </div>
+                    </div>
+                </div>
+   
+                           
+
+            </div>
+            <div class='col-md-8'>
+                <div class='boxtt top'>
+                    <h3><strong>{{user.username}}</strong></h4>
+                    <a>Đã đăng nhập bằng google</a>
+                </div>
+                <div class='boxtt top'>
+                    <h4>Nhập thông tin chi tiết của bạn</h4>
+                    <div class="row">
+                        <div class="col">
+                            <label class="form-label">Họ:</label>
+                            <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
+                            
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Tên:</label>
+                            <input type="text" class="form-control" placeholder="First name" aria-label="First name">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="inputAddress" class="form-label">Địa chỉ:</label>
+                        <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                        <a>Bạn sẽ nhận thông tin đặt phòng ở mail này.</a>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputCity" class="form-label">Vùng/ Quốc gia:</label>
+                        <input type="text" class="form-control" id="inputCity">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputCity" class="form-label">SĐT:</label>
+                        <input type="text" class="form-control" id="phone">
+                        <a>Chúng tôi sẽ liên hệ hoàn tất đặt phòng.</a>
+                    </div>
+                    <div>
+                        <h6>Bạn đặt phòng cho ai ?</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                            <label class="form-check-label" for="invalidCheck">
+                                Đặt cho tôi
+                            </label>
+                            </div>
+                            <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                            <label class="form-check-label" for="invalidCheck">
+                                Đặt cho người khác
+                            </label>
+                            </div>
+                    </div>
+                    <div>
+                        <h6>Bạn sắp đi công tác?</h6>
+                        <div class='row'>
+                            <div class='col-md-2'>
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                Đúng
+                                </label>
+                            </div>
+                            <div class='col-md-2'>
+                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                <label class="form-check-label" for="gridRadios1">
+                                    Sai
+                                </label>
+                            </div>
+                            
+                        </div>
+                    </div> 
+                </div>
+                <div class='boxtt top' >
+                    <h4>Mánh nhỏ cho bạn</h4>
+                    <a><img class='icon' src='{% static 'app/images/icon/card.png' %}'></img></a>
+                    <a> Không cần thẻ tín dụng.</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/tick.png' %}'></img></a>
+                    <a> Linh hoạt: Bạn có thể hủy miễn phí trước ngày 11 tháng 10 năm 2023, vậy nên hãy chốt mức giá tốt hôm nay.</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/tick.png' %}'></img></a>
+                    <a> Hôm nay không cần trả tiền. Bạn sẽ thanh toán trong lúc nghỉ.</a>
+                </div>
+                <div class='boxtt top' >
+                    <h4>{{tenphong}}</h4>
+                    <a><img class='icon' src='{% static 'app/images/icon/check.png' %}'></img></a>
+                    <a> Bao gồm chỗ đậu xe + nhận phòng sớm + nhận phòng trễ + internet tốc độ cao</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/check.png' %}'></img></a>
+                    <a>Hủy miễn phí trước: {{ngay_gio_nhan}}</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/people.png' %}'></img></a>
+                    <a> Khách: {{so_luong_nguoi}} người</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/no-smoking.png' %}'></img></a>
+                    <a> Không được hút thuốc</a><br>
+                   
+                </div>
+                <div class='boxtt top' >
+                    <h4>Các yêu cầu đặt biệt</h4>
+                    <a>
+                        Các yêu cầu đặc biệt không đảm bảo sẽ được đáp ứng – tuy nhiên, chỗ nghỉ sẽ cố gắng hết sức để thực hiện. Bạn luôn có thể gửi yêu cầu đặc biệt sau khi hoàn tất đặt phòng của mình!
+                    </a><br>
+                    <h6 class='top2'><strong>Vui lòng nhập tại đây( Không bắt buộc )</strong></h6>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                </div>
+                <div class='boxtt top' >
+                    <h4>Thời gian đến của bạn</h4>
+                    <a><img class='icon' src='{% static 'app/images/icon/tick.png' %}'></img></a>
+                    <a> Nhận phòng sớm từ 12:00.</a><br>
+                    <a><img class='icon' src='{% static 'app/images/icon/receptionist.png' %}'></img></a>
+                    <a> Lễ tân 24 giờ - Luôn có trợ giúp mỗi khi bạn cần!</a><br>
+                    
+                </div>
+                <div class='boxtt top' >
+                    <h4>Xem lại quy tắc chung</h4>
+                    <a> Chủ chỗ nghỉ muốn bạn đồng ý với các quy tắc chung này:</a><br
+                    <ul>
+                        <li>Thời gian yên lặng từ 23:00 đến 08:00</li>
+                        <li>Không cho phép thú cưng</li>
+                    </ul>
+                    <h6 class='top2'>Khi tiếp tục các bước tiếp theo, bạn đồng ý với các quy tắc chung này.</6>
+                </div>
+
+            </div>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="ngay_nhan" value="{{ngay_gio_nhan }}">
+            <input type="hidden" name="ngay_tra" value="{{ ngay_gio_tra }}">
+            <input type="hidden" name="so_luong_dem" value="{{ so_dem }}">
+            <input type="hidden" name="phong_id" value="{{ request.GET.phong_id}}">
+            <input type="submit"  data-bs-toggle="modal" data-bs-target="#staticBackdrop" class='hoantat' value="Hoàn tất đặt phòng">
+        </form>
+
+
+    <div class='textend'>
+        <b>Khám phá du lịch xung quanh cùng TravelNest</b>
+        <p>Rất nhiều sự lựa chọn</p>
+        <p>TravelNest.com</p>
+      </div>
+</div>
+
+{% endblock content %}

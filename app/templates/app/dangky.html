@@ -1,0 +1,89 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="h-100 "style="background-color: #F5F7F8;">
+    <div class="containernew py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card card-registration my-4">
+            <div class="row g-0">
+              <div class="col-xl-6 d-none d-xl-block">
+                <img src='{% static 'app/images/Q-N.png' %}'
+                  alt="Sample photo" class="img-fluid"
+                  style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" />
+              </div>
+              
+                <div class="col-xl-6">
+
+                    <div class="card-body p-md-5 text-black">
+                      <h3 class="mb-5 text-uppercase">Đăng ký tài khoản</h3>
+                      <form method = "POST" action="">
+                        {% csrf_token %}
+                        <div class="row">
+                          <div class='col'>
+                              <label class="form-label" for="form3Example8">User Name:</label>
+                          </div>
+                          <div class='col'>
+                              <a class='left'>{{form.username}}</a>
+                          </div>
+                        </div>
+                        <div class="row top">
+                          <div class='col'>
+                            <label class="form-label" for="form3Example8">First Name:</label>
+                          </div>
+                          <div class='col top'>
+                              <a class='left'> {{form.first_name}}</a>
+                          </div>
+                        </div>
+                        <div class="row top">
+                          <div class='col'>
+                            <label class="form-label" for="form3Example8">Last Name:</label>
+                        </div>
+                        <div class='col'>
+                            <a class='left'> {{form.last_name}}</a>
+                        </div>
+                        </div>
+                        <div class="row top">
+                          <div class='col'>
+                            <label class="form-label" for="form3Example8">Email:</label>
+                        </div>
+                        <div class='col'>
+                            <a class='left'> {{form.email}}</a>
+                        </div>
+                        </div>
+                        <div class="row top">
+                          <div class='col'>
+                            <label class="form-label" for="form3Example8">Password:</label>
+                        </div>
+                        <div class='col'>
+                            <a class='left'> {{form.password1}}</a>
+                        </div>
+                        </div>
+                        <div class="row top">
+                          <div class='col'>
+                            <label class="form-label" for="form3Example8">Repeat password:</label>
+                          </div>
+                          <div class='col'>
+                            <a class='left'> {{form.password2}}</a>
+                          </div>
+                        </div>
+                        <div class="d-flex justify-content-end pt-3">
+                          <button type="submit" class="btn btn-light btn-gt">Đăng ký</button>
+                        </div>
+                        <p class="text-center text-muted mt-5 mb-0">Đã có tài khoản? <a href="{%url 'dangnhap'%}"
+                          class="fw-bold text-body"><u>Đăng nhập tại đây!</u></a></p>
+                      </form>
+                    </div>
+
+                </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
