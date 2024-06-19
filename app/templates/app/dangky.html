@@ -19,7 +19,7 @@
 
                     <div class="card-body p-md-5 text-black">
                       <h3 class="mb-5 text-uppercase">Đăng ký tài khoản</h3>
-                      <form method = "POST" action="">
+                      <form method = "POST" action="{% url 'dangky' %}">
                         {% csrf_token %}
                         <div class="row">
                           <div class='col'>
