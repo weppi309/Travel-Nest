@@ -87,11 +87,11 @@
             </div>
           </div>
           <div class='col-md-3 btnpt'>
-            <a href ='#phong'>
-              <button class='btn_pt ktr' type='submit'>
-                Kiểm tra phòng trống
-              </button>
-            </a>
+            
+            <button class='btn_pt ktr'>
+              <a href ='#phong' style ="color:#000">Kiểm tra phòng trống</a>
+            </button>
+
   
           </div>
         </div> </br>
@@ -101,18 +101,25 @@
       <!--anh-->
       <div>
         <div class='bacot'>
-          {% for anh in listanhks %}
-          <div>
+          
+          {% comment %} <div>
             <a><img class='anhlon' src="{{anh.anhks.url}}"></img></a>
-          </div>
+          </div> {% endcomment %}
           <div class='row'>
-            
+            {% for anh in listanhks %}
               <div >
                 <img class='anhnho' src="{{ anh.anhks.url }}">
               </div>
-            
+              {% endfor %}  
           </div>
-          {% endfor %}  
+          <div class='row'>
+            {% for anh in listanhks %}
+              <div >
+                <img class='anhnho' src="{{ anh.anhks.url }}">
+              </div>
+              {% endfor %}  
+          </div>
+          
           
         </div>
         
@@ -179,21 +186,19 @@
     </div>
 
 
-
+    <!--phòng-->
     <div class='brm1 top2' id='danh-sach-phong'>
       <h3 id='phong'><strong>Chọn phòng</strong></h3>
         <div class ='row'>
-          <div class= "col-9">
+          <div class= "col">
             <table class="table table-bordered" >
               <thead  style="background-color:#7E8EF1; width: 100%;" >
                 <tr>
-                  <th class="col-2">Loại phòng</th>
-                  <th class="col-1">Số lượng khách</th>
-                  <th class="col-1">Giá phòng</th>
-                  <th class="col-1">Chọn phòng</th>
-                  {% comment %} <th class="col-3">
-                    <button class='top btn_pt border-primary '>Tôi đặt phòng</button>
-                  </th> {% endcomment %}
+                  <th class="col-4">Loại phòng</th>
+                  <th class="col-2">Số lượng khách</th>
+                  <th class="col-2">Giá phòng</th>
+                  <th class="col-2">Chọn phòng</th>
+                  <th class="col-2"></th>
                 </tr>
               </thead>
               <tbody>
@@ -219,32 +224,25 @@
                   <td>{{phong.soluongnguoi}} người</td>
                   <td class ="giaphong">{{phong.giaphong}}</td>
                   <td>
-                    <div class="dropdown" id="dropdown-container{{ phong.id }}">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                            Chọn
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ phong.id }}" id="dropdown-menu{{ phong.id }}">
-
-                            {% for i in phong.range_soluong %}
-                            <li><button class="dropdown-item" value="{{ i }}">{{ i }}</button></li>
-                            {% endfor %}
-                        </ul>
+                    <div class="dropdown" id="dropdown-container-{{ phong.id }}">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                          0
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ phong.id }}" id="dropdown-menu-{{ phong.id }}">
+                          {% for i in phong.range_soluong %}
+                          <li><button class="dropdown-item" value="{{ i }}">{{ i }}</button></li>
+                          {% endfor %}
+                      </ul>
+                      <input type="hidden" id="quantityInput-{{ phong.id }}" name="quantity" value="0">
                     </div>
+                  </td>
+                  <td>
+                      <button data-phong="{{phong.id}}" class="btn btn-primary datphong">Tôi đặt phòng</button>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          </div>
-          <div class ="col">
-            <div id="price-info" class="container mt-3">
-              <div id="price-content" class="alert alert-info" role="alert" height="1500px">
-                  <!-- Giá cả phòng sẽ được hiển thị ở đây -->
-
-              </div>
-            </div>
-              <button data-phong="{{phong.id}}" class="btn btn-primary datphong">Tôi đặt phòng</button>
-
           </div>
         </div>
     </div>
@@ -401,8 +399,8 @@
           {% for danhgia in danhgias  %}
           <div class='boxm3'>
             <h6><strong>{{danhgia.diem}}/10 - {{danhgia.get_danh_gia}}</strong></h6>
-            <h6>Tên: {{danhgia.user}}</h6>
-            <h6>{{danhgia.ngay_danhgia}}</h6>
+            <h6>Tên: {{danhgia.hoadon.user.username}}</h6>
+            <h6>{{danhgia.created_date}}</h6>
             <h6>Bình luận: {{danhgia.binhluan}}</h6>
           </div>
           {% endfor %}
@@ -436,58 +434,7 @@
   mapImage.src = mapUrl;
 </script>
 
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
 
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('click', function(event) {
-            var target = event.target;
-            if (target.classList.contains('dropdown-item')) {
-                var value = target.value;
-                var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                button.innerText = value;
-            }
-        });
-    });
-});
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-    var priceContent = document.getElementById('price-content');
-
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        var totalAmount = 0;
-        dropdowns.forEach(function(dropdown) {
-            var selectedQuantity = parseInt(dropdown.closest('tr').querySelector('.dropdown-toggle').innerText.trim());
-            var pricePerRoomElement = dropdown.querySelector('.giaphong');
-            var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim()) : 0;
-            var roomTotalPrice = selectedQuantity * pricePerRoom;
-            totalAmount += roomTotalPrice;
-        });
-        return totalAmount;
-    }
-
-    // Function to update price content
-    function updatePriceContent() {
-        var totalPrice = calculateTotalPrice();
-        priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-    }
-
-    // Event listener for dropdown menu to update total price
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('click', function(event) {
-            var target = event.target;
-            if (target.classList.contains('dropdown-item')) {
-                updatePriceContent();
-            }
-        });
-    });
-});
-</script> {% endcomment %}
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     var dropdowns = document.querySelectorAll('.dropdown-menu');
@@ -503,183 +450,93 @@
                   var button = document.getElementById('dropdownMenuButton' + dropdownId);
                   button.innerText = value;
 
-                  // Update price content only if pricePerRoomElement exists
-                  var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                  if (pricePerRoomElement) {
-                      updatePriceContent();
-                  }
+
               }
           });
       }
     });
-
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        var totalAmount = 0;
-        dropdowns.forEach(function(dropdown) {
-          var selectedQuantity = parseInt(dropdown.querySelector('.dropdown-item').textContent.trim());
-          var pricePerRoomElement = dropdown.querySelector('.giaphong');
-          var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim()) : 0;
-            var roomTotalPrice = selectedQuantity * pricePerRoom;
-            totalAmount += roomTotalPrice;
-        });
-        return totalAmount;
-    }
-
-    // Function to update price content
-    function updatePriceContent() {
-        var totalPrice = calculateTotalPrice();
-        priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-    }
-
-    
   });
 </script> 
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      var dropdowns = document.querySelectorAll('.dropdown-menu');
-      var priceContent = document.getElementById('price-content');
-
-      dropdowns.forEach(function(dropdown) {
-          if (dropdown) {
-              dropdown.addEventListener('click', function(event) {
-                  var target = event.target;
-                  if (target.classList.contains('dropdown-item')) {
-                      var value = target.value;
-                      var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                      var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                      button.innerText = value;
-
-                      // Update price content only if pricePerRoomElement exists
-                      var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                      if (pricePerRoomElement) {
-                          updatePriceContent();
-                      }
-                  }
-              });
-          }
-      });
-
-      // Function to calculate total price
-      function calculateTotalPrice() {
-          var totalAmount = 0;
-          dropdowns.forEach(function(dropdown) {
-              var selectedQuantityElement = dropdown.querySelector('.dropdown-item.active');
-              if (selectedQuantityElement) {
-                  var selectedQuantity = parseInt(selectedQuantityElement.textContent.trim());
-                  var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                  var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim().replace(/[^\d.-]/g, '')):0;
-                  var roomTotalPrice = selectedQuantity * pricePerRoom;
-                  totalAmount += roomTotalPrice;
-              }
-          });
-          return totalAmount;
-      }
-
-      // Function to update price content
-      function updatePriceContent() {
-          var totalPrice = calculateTotalPrice();
-          priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-      }
-  });
-</script> {% endcomment %}
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-    var priceContent = document.getElementById('price-content');
-    var bookingForm = document.getElementById('bookingForm');
-    var bookingDataInput = document.getElementById('bookingData');
-
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        var totalAmount = 0;
-        var bookingData = [];
-        dropdowns.forEach(function(dropdown) {
-            var button = dropdown.previousElementSibling;
-            var selectedQuantity = parseInt(selectedQuantityElement.textContent.trim());
-            var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-            var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim().replace(/[^\d.-]/g, '')):0;
-            var roomTotalPrice = selectedQuantity * pricePerRoom;
-            totalAmount += roomTotalPrice;
-
-            if (selectedValue && !isNaN(pricePerRoom)) {
-                bookingData.push({
-                    roomType: dropdown.closest('tr').querySelector('th > div').textContent.trim(),
-                    quantity: parseInt(selectedValue),
-                    price: pricePerRoom,
-                    total: roomTotalPrice
-                });
-            }
-        });
-        bookingDataInput.value = JSON.stringify(bookingData);
-        return totalAmount;
-    }
-
-    // Function to update price content
-    function updatePriceContent() {
-        var totalPrice = calculateTotalPrice();
-        priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-    }
-
-    // Event listener for dropdown menu
-    dropdowns.forEach(function(dropdown) {
-      if (dropdown) {
-          dropdown.addEventListener('click', function(event) {
-              var target = event.target;
-              if (target.classList.contains('dropdown-item')) {
-                  var value = target.value;
-                  var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                  var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                  button.innerText = value;
-
-                  // Update price content only if pricePerRoomElement exists
-                  var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                  if (pricePerRoomElement) {
-                      updatePriceContent();
-                  }
-              }
-          });
-      }
-  });
-
-});
-</script> {% endcomment %}
 <script>
-  // JavaScript to handle booking form submission
-  document.getElementById('datPhongButton').addEventListener('click', function(event) {
-    event.preventDefault();
-    var bookingData = [];
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-
-    dropdowns.forEach(function(dropdown) {
-      var selectedQuantityElement = dropdown.querySelector('.dropdown-item.active');
-      if (selectedQuantityElement) {
-        var selectedQuantity = parseInt(selectedQuantityElement.textContent.trim());
-        var roomId = dropdown.closest('tr').querySelector('.dropdown-toggle').id.replace('dropdownMenuButton', '');
-        var roomPrice = dropdown.closest('tr').querySelector('.giaphong').textContent.trim().replace(/[^\d.-]/g, '');
-        bookingData.push({roomId: roomId, quantity: selectedQuantity, price: roomPrice});
-      }
+  document.addEventListener('DOMContentLoaded', function () {
+    var modalButtons = document.querySelectorAll('button[data-bs-target="#exampleModal"]');
+    var phongIdInput = document.querySelector('input[name="phong_id"]');
+    
+    modalButtons.forEach(function (modalButton) {
+        modalButton.addEventListener('click', function (event) {
+            var phongId = event.currentTarget.getAttribute('data-phong');
+            phongIdInput.value = phongId;
+        });
     });
+});
+</script> 
 
-    // Create a form and submit the data
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '{% url "datphong" %}'; // Update with your booking URL
+<script>
+  $(document).ready(function () {
+      // Lắng nghe sự kiện thay đổi của ô ngày check-in và check-out
+      $("#check-in, #check-out").change(function () {
+          // Lấy giá trị từ ô ngày check-in và check-out
+          var checkInDate = $("#check-in").val();
+          var checkOutDate = $("#check-out").val();
 
-    var csrfToken = document.createElement('input');
-    csrfToken.type = 'hidden';
-    csrfToken.name = 'csrfmiddlewaretoken';
-    csrfToken.value = '{{ csrf_token }}';
-    form.appendChild(csrfToken);
+          // Thực hiện AJAX để gửi yêu cầu đến máy chủ
+          $.ajax({
+              url: 'ks',  // Thay đổi đường dẫn tương ứng với view xử lý yêu cầu
+              type: 'GET',
+              data: {
+                  'check_in_date': checkInDate,
+                  'check_out_date': checkOutDate
+              },
+              success: function (data) {
+                  // Cập nhật danh sách phòng trống trên trang
+                  $("#danh-sach-phong").html(data);
+              },
+              error: function () {
+                  console.log('Đã xảy ra lỗi trong quá trình tải danh sách phòng.');
+              }
+          });
+      });
+  });
+</script> 
 
-    var bookingDataInput = document.createElement('input');
-    bookingDataInput.type = 'hidden';
-    bookingDataInput.name = 'bookingData';
-    bookingDataInput.value = JSON.stringify(bookingData);
-    form.appendChild(bookingDataInput);
+<script>
 
-    document.body.appendChild(form);
-    form.submit();
+  document.addEventListener('DOMContentLoaded', function() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(function(dropdown) {
+      const dropdownButton = dropdown.querySelector('.dropdown-toggle');
+      const dropdownItems = dropdown.querySelectorAll('.dropdown-item');
+      const quantityInput = dropdown.querySelector('input[type="hidden"]');
+  
+      dropdownItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+          const selectedValue = this.value;
+          dropdownButton.textContent = selectedValue;
+          quantityInput.value = selectedValue;
+        });
+      });
+    });
+  
+    const datPhongButtons = document.querySelectorAll('.datphong');
+  
+    datPhongButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        const phongId = this.getAttribute('data-phong');
+        const quantityInput = document.querySelector(`#quantityInput-${phongId}`);
+        const quantity = quantityInput.value;
+        var ngayNhan = document.getElementById("check-in").value;
+        var ngayTra = document.getElementById("check-out").value;
+        var phongid = $(this).data("phong");
+
+
+        // Create URL with query parameters
+        var url = "/datphong/?ngay_nhan=" + ngayNhan + "&ngay_tra=" + ngayTra + "&phong_id=" + phongid + "&quantity=" +quantity ;
+        window.location.href = url;
+              
+      });
+    });
   });
 </script>
+
 {% endblock content %}

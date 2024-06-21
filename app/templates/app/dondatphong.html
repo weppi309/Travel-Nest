@@ -6,16 +6,17 @@
     {% for hoadon in hoadons %}
         <div class='top1'>
             <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
-            <p>Ngày đặt: {{ hoadon.ngay_gio_dat }}</p>
+            <p>Ngày đặt: {{ hoadon.created_date }}</p>
             <!-- Thêm các thông tin khác của hóa đơn ở đây -->
             {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
             <ul>
+                <li>{{chitiethoadon.hoadon}}</li>
                 <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
                 <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
-                <li id= 'phong'>Phòng: {{ chitiethoadon.phong.loaiphong.tenloaiphong }}</li>
+                <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
                 <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
                 <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
-                <li>Tổng tiền: {{ chitiethoadon.total_tien|floatformat:2|intcomma}}</li>  
+                {% comment %} <li>Tổng tiền: {{ chitiethoadon.total_tien|floatformat:2|intcomma}}</li>   {% endcomment %}
             </ul>
             <div class="d-flex justify-content-left">
                 <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}">

@@ -8,7 +8,7 @@
         <div class="boxtt">
             <h4>Ảnh phòng</h4>
             <div id="carouselExample{{ forloop.counter }}" class="carousel slide">
-                {% comment %} <div class="carousel-inner">
+                <div class="carousel-inner">
                     {% for anh in anh_phong %}
                         {% if forloop.first %}
                             <div class="carousel-item active">
@@ -18,7 +18,7 @@
                         <img src="{{ anh.anhphong.url }}" alt="{{ phong.tenphong }}" class="card-img-top" height="500px">
                     </div>
                     {% endfor %}
-                </div> {% endcomment %}
+                </div> 
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon"></span>
                     <span class="visually-hidden">Previous</span>
@@ -31,7 +31,8 @@
         </div>
     </div>
     
-        
+        <h1>Received Quantity</h1>
+        <div id="displayQuantity">{{slphong}}</div>
         <div class='row'>
             <div class='col-6 col-md-4'>            
                 <div class='boxtt top' >                    
@@ -63,7 +64,12 @@
                     <h4>
                         Chi tiết nhận phòng
                     </h4>
+                
+                    <h6><strong>Tên phòng:</strong></h6>
+                    <h6>{{tenphong}}</h6>
+                    
                     <div class='row'>
+                        
                         <div class='col'>
                             <h6>Nhận phòng</h6>
                             <h6>{{ngay_gio_nhan}}</h6>
@@ -241,14 +247,31 @@
 
             </div>
         </div>
-        <form method="post" action="">
-            {% csrf_token %}
-            <input type="hidden" name="ngay_nhan" value="{{ngay_gio_nhan }}">
-            <input type="hidden" name="ngay_tra" value="{{ ngay_gio_tra }}">
-            <input type="hidden" name="so_luong_dem" value="{{ so_dem }}">
-            <input type="hidden" name="phong_id" value="{{ request.GET.phong_id}}">
-            <input type="submit"  data-bs-toggle="modal" data-bs-target="#staticBackdrop" class='hoantat' value="Hoàn tất đặt phòng">
-        </form>
+        <button type="button" class="hoantat" id="paymentButton">Thanh toán</button>
+        <div class="modal" tabindex="-1" id="paymentModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">TravelNest.com</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Lựa chọn hình thức thanh toán bạn nhé!</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="ngay_nhan" value="{{ngay_gio_nhan }}">
+                        <input type="hidden" name="ngay_tra" value="{{ ngay_gio_tra }}">
+                        <input type="hidden" name="so_luong_dem" value="{{ so_dem }}">
+                        <input type="hidden" name="phong_id" value="{{ request.GET.phong_id}}">
+                        <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Thanh toán khi nhận phòng</button>
+                    </form>
+                    <a href="{%url 'payment'%}"><button type="button" class="btn btn-primary" >Thanh toán ngân hàng</button></a>
+                </div>
+              </div>
+            </div>
+        </div>
 
 
     <div class='textend'>
@@ -257,5 +280,35 @@
         <p>TravelNest.com</p>
       </div>
 </div>
+<script>
+    document.getElementById('paymentButton').addEventListener('click', function() {
+        var paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        paymentModal.show();
+    });
+</script>
+<script>
+        // Lấy giá từ phần tử HTML
+        var dongia = "{{ dongia }}";
+        sessionStorage.setItem("totalPrice", dongia);
+        // Lưu giá vào cookie với hạn sử dụng (expiry) là 1 ngày
+        document.cookie = "totalPrice=" + dongia + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+    
+        var user = "{{ user.username }}";
+        var phong_id = "{{ phong_id }}";
+        var ngay_gio_nhan = "{{ ngay_gio_nhan}}";
+        var ngay_gio_tra = "{{ ngay_gio_tra }}";
+        var soluong = "{{ so_dem }}";
+        
+        // Lưu các giá trị khác vào cookie
+        document.cookie = "totalPrice=" + dongia + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+        document.cookie = "user=" + user + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+        document.cookie = "phong_id=" + phong_id + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+        document.cookie = "ngay_gio_nhan=" + ngay_gio_nhan + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+        document.cookie = "ngay_gio_tra=" + ngay_gio_tra + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+        document.cookie = "soluong=" + soluong + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+
+
+    
+</script>
 
 {% endblock content %}
