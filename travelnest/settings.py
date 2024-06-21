@@ -156,3 +156,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#payment
+VNPAY_RETURN_URL = 'http://localhost:8000/payment_return'
+VNPAY_PAYMENT_URL ='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+VNPAY_TMN_CODE ='I1TDDTC5'
+VNPAY_HASH_SECRET_KEY ='WYEK2R3W4FO4N5JJ9OEHJW64JYPKYXNF'

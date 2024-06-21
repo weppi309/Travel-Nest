@@ -143,65 +143,53 @@ def dondatphong(request):
             diem = request.POST.get("exampleRadios")
             binhluan = request.POST.get("binhluan")
             phong_id = request.POST.get("phong_id")  # Lấy phong_id từ biểu mẫu đánh giá
-            hoadon = HoaDon.objects.get(chitiethoadon__phong_id=phong_id, user=customer)  # Lấy hóa đơn dựa trên phong_id
-            danhgia = Danhgia.objects.create(user=customer, phong=hoadon.chitiethoadon_set.get(phong_id=phong_id).phong, diem=diem, binhluan=binhluan)
+            # hoadon = HoaDon.objects.get(chitiethoadon__phong_id=phong_id, user=customer)  # Lấy hóa đơn dựa trên phong_id
+            # danhgia = Danhgia.objects.create(user=customer, phong=hoadon.chitiethoadon_set.get(phong_id=phong_id).phong, diem=diem, binhluan=binhluan)
             return redirect('dondatphong')  # Chuyển hướng trở lại trang danh sách hóa đơn sau khi đánh giá
     else:
         hoadon =[]
         
     context ={'hoadons':hoadons}
     return render(request,'app/dondatphong.html', context)
+
+
 @login_required(login_url='dangnhap')
 def datphong(request):
-    # if request.user.is_authenticated:
-    #     if request.method == 'GET':           
-    #         ngay_gio_nhan = request.GET.get("ngay_nhan")
-    #         ngay_gio_tra = request.GET.get("ngay_tra")
-    #         so_luong_nguoi = request.GET.get("so_luong_nguoi")
-    #         phong_id = request.GET.get("phong_id")
-    #         phong = Phong.objects.get(id= phong_id)
-    #         ten_ks= phong.khachsan.tenkhachsan
-    #         ten_tinh= phong.khachsan.tinh.tentinh
-    #         tenphong = phong.loaiphong.tenloaiphong
-    #         dongia=phong.giaphong
-    #         ngay_gio_nhan_str = datetime.strptime(ngay_gio_nhan, "%Y-%m-%dT%H:%M")
-    #         ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
-    #         so_dem= (ngay_gio_tra_str-ngay_gio_nhan_str).days
-    #         total=so_dem*dongia
-    #         anh_phong = Anh.objects.filter(phong=phong)    
-    #         diemtb_danhgia = phong.khachsan.diem_trung_binh    
-    #         tendiem_tb= phong.khachsan.get_danh_gia_tb
-    #         tong_danhgia=phong.khachsan.sum_danh_gia
-    #         tien_nghi_phong = SapXepTN.objects.filter(phong=phong).values('tiennghi__tentiennghi', 'tiennghi__icon')
-    #         # Bây giờ bạn có thể truy cập từng giá trị như sau:
-    #         tien_nghi_list = []
-    #         for item in tien_nghi_phong:
-    #             tentiennghi = item['tiennghi__tentiennghi']
-    #             icon = item['tiennghi__icon']
-    #             tien_nghi_list.append({'tentiennghi': tentiennghi, 'icon': icon})
-    #         context ={'ten_tinh':ten_tinh,'so_luong_nguoi':so_luong_nguoi,
-    #                   'ngay_gio_nhan':ngay_gio_nhan,'ngay_gio_tra': ngay_gio_tra,
-    #                   'ten_ks': ten_ks,'so_dem':so_dem,
-    #                   'total':total,'tenphong':tenphong,
-    #                   'dongia':dongia,'anh_phong':anh_phong,'tien_nghi_list':tien_nghi_list,
-    #                   'diemtb_danhgia':diemtb_danhgia,'tendiem_tb':tendiem_tb,'tong_danhgia':tong_danhgia}
-            return render(request,'app/datphong.html')
-    #     elif request.method=='POST':
-    #         ngay_nhan = request.POST.get("ngay_nhan")
-    #         ngay_tra = request.POST.get("ngay_tra")
-    #         so_luong_dem = request.POST.get("so_luong_dem")
-    #         phong_id = request.POST.get("phong_id")
-    #         # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
-    #         phong = Phong.objects.get(id=phong_id)
-    #         don_gia = phong.giaphong
-    #         customer = request.user
-    #         hoadon = HoaDon.objects.create(user=customer,trangthaihoanthanh="Chưa hoàn thành")
-    #         chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong=so_luong_dem,dongia=don_gia)
-    #         return redirect('dondatphong')
-    #         # Lưu thay đổi vào cơ sở dữ liệu  
-    # else:
-    #     chitiethoadon=[]
-    #     hoadon ={''}
+    if request.user.is_authenticated:
+        if request.method == 'GET':
+            slphong = request.GET.get("quantity")
+            ngay_gio_nhan = request.GET.get("ngay_nhan")
+            ngay_gio_tra = request.GET.get("ngay_tra")
+            phong_id = request.GET.get("phong_id")
+            phong = Phong.objects.get(id= phong_id)
+            ten_ks= phong.khachsan.tenkhachsan
+            ten_tinh= phong.khachsan.tinh.tentinh
+            tenphong = phong.tenphong
+            dongia=phong.giaphong
+            anh_phong = AnhPhong.objects.filter(phong=phong)
+            ngay_gio_nhan_str = datetime.strptime(ngay_gio_nhan, "%Y-%m-%dT%H:%M")
+            ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
+            so_dem= (ngay_gio_tra_str-ngay_gio_nhan_str).days
+            total=so_dem*dongia
+            context={'phong_id':phong_id,'ten_tinh':ten_tinh,'ngay_gio_nhan':ngay_gio_nhan,'ngay_gio_tra': ngay_gio_tra,'ten_ks': ten_ks,'anh_phong':anh_phong,'slphong':slphong,'so_dem':so_dem,'total':total,'tenphong':tenphong,'dongia':dongia}
+            return render(request,'app/datphong.html',context)
+        elif request.method=='POST':
+            ngay_nhan = request.POST.get("ngay_nhan")
+            ngay_tra = request.POST.get("ngay_tra")
+            so_luong_dem = request.POST.get("so_luong_dem")
+            phong_id = request.POST.get("phong_id")
+            # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
+            phong = Phong.objects.get(id=phong_id)
+            don_gia = phong.giaphong
+            customer = request.user
+            hoadon = HoaDon.objects.create(user=customer)
+            chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong=so_luong_dem,dongia=don_gia)
+            return redirect('dondatphong')
+            # Lưu thay đổi vào cơ sở dữ liệu  
+    else:
+        chitiethoadon=[]
+        hoadon ={''}
+
 
 def index(request):
     # Xác định ngày hiện tại
@@ -322,3 +310,312 @@ def dashboard(request):
     }
     
     return render(request, 'pages/dashboard.html', context)
+
+
+import hashlib
+import hmac
+import json
+import urllib
+import urllib.parse
+import urllib.request
+import random
+import requests
+from datetime import datetime
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
+# from django.utils.http import urlquote
+from urllib.parse import quote
+from app.models import PaymentForm
+from app.vnpay import vnpay
+
+
+def index_payment(request):
+    return render(request, "payment/index.html", {"title": "Danh sách demo"})
+
+
+def hmacsha512(key, data):
+    byteKey = key.encode('utf-8')
+    byteData = data.encode('utf-8')
+    return hmac.new(byteKey, byteData, hashlib.sha512).hexdigest()
+
+@login_required
+def payment(request):
+    if request.method == 'POST':
+        # Process input data and build url payment
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            order_type = form.cleaned_data['order_type']
+            order_id = form.cleaned_data['order_id']
+            amount = form.cleaned_data['amount']
+            order_desc = form.cleaned_data['order_desc']
+            bank_code = form.cleaned_data['bank_code']
+            language = form.cleaned_data['language']
+            ipaddr = get_client_ip(request)
+            # Build URL Payment
+            vnp = vnpay()
+            vnp.requestData['vnp_Version'] = '2.1.0'
+            vnp.requestData['vnp_Command'] = 'pay'
+            vnp.requestData['vnp_TmnCode'] = settings.VNPAY_TMN_CODE
+            vnp.requestData['vnp_Amount'] = amount * 100
+            vnp.requestData['vnp_CurrCode'] = 'VND'
+            vnp.requestData['vnp_TxnRef'] = order_id
+            vnp.requestData['vnp_OrderInfo'] = order_desc
+            vnp.requestData['vnp_OrderType'] = order_type
+            # Check language, default: vn
+            if language and language != '':
+                vnp.requestData['vnp_Locale'] = language
+            else:
+                vnp.requestData['vnp_Locale'] = 'vn'
+                # Check bank_code, if bank_code is empty, customer will be selected bank on VNPAY
+            if bank_code and bank_code != "":
+                vnp.requestData['vnp_BankCode'] = bank_code
+
+            vnp.requestData['vnp_CreateDate'] = datetime.now().strftime('%Y%m%d%H%M%S')  # 20150410063022
+            vnp.requestData['vnp_IpAddr'] = ipaddr
+            vnp.requestData['vnp_ReturnUrl'] = settings.VNPAY_RETURN_URL
+            vnpay_payment_url = vnp.get_payment_url(settings.VNPAY_PAYMENT_URL, settings.VNPAY_HASH_SECRET_KEY)
+            print(vnpay_payment_url)
+            return redirect(vnpay_payment_url)
+        else:
+            print("Form input not validate")
+    else:
+        return render(request, "payment/payment.html", {"title": "Thanh toán"})
+
+
+def payment_ipn(request):
+    inputData = request.GET
+    if inputData:
+        vnp = vnpay()
+        vnp.responseData = inputData.dict()
+        order_id = inputData['vnp_TxnRef']
+        amount = inputData['vnp_Amount']
+        order_desc = inputData['vnp_OrderInfo']
+        vnp_TransactionNo = inputData['vnp_TransactionNo']
+        vnp_ResponseCode = inputData['vnp_ResponseCode']
+        vnp_TmnCode = inputData['vnp_TmnCode']
+        vnp_PayDate = inputData['vnp_PayDate']
+        vnp_BankCode = inputData['vnp_BankCode']
+        vnp_CardType = inputData['vnp_CardType']
+        if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
+            # Check & Update Order Status in your Database
+            # Your code here
+            firstTimeUpdate = True
+            totalamount = True
+            if totalamount:
+                if firstTimeUpdate:
+                    if vnp_ResponseCode == '00':
+                        print('Payment Success. Your code implement here')
+                    else:
+                        print('Payment Error. Your code implement here')
+
+                    # Return VNPAY: Merchant update success
+                    result = JsonResponse({'RspCode': '00', 'Message': 'Confirm Success'})
+                else:
+                    # Already Update
+                    result = JsonResponse({'RspCode': '02', 'Message': 'Order Already Update'})
+            else:
+                # invalid amount
+                result = JsonResponse({'RspCode': '04', 'Message': 'invalid amount'})
+        else:
+            # Invalid Signature
+            result = JsonResponse({'RspCode': '97', 'Message': 'Invalid Signature'})
+    else:
+        result = JsonResponse({'RspCode': '99', 'Message': 'Invalid request'})
+
+    return result
+
+
+def payment_return(request):
+    inputData = request.GET
+    if inputData:
+        vnp = vnpay()
+        vnp.responseData = inputData.dict()
+        order_id = inputData['vnp_TxnRef']
+        amount = int(inputData['vnp_Amount']) / 100
+        order_desc = inputData['vnp_OrderInfo']
+        vnp_TransactionNo = inputData['vnp_TransactionNo']
+        vnp_ResponseCode = inputData['vnp_ResponseCode']
+        vnp_TmnCode = inputData['vnp_TmnCode']
+        vnp_PayDate = inputData['vnp_PayDate']
+        vnp_BankCode = inputData['vnp_BankCode']
+        vnp_CardType = inputData['vnp_CardType']
+
+        # Lấy giá trị từ cookie
+        # totalPrice = request.COOKIES.get('totalPrice')
+        user = request.COOKIES.get('user')
+        cutomer= User.objects.get(username=user)
+        phong_id = request.COOKIES.get('phong_id')
+        ngay_gio_nhan = request.COOKIES.get('ngay_gio_nhan')
+        ngay_gio_tra = request.COOKIES.get('ngay_gio_tra')
+        soluong = request.COOKIES.get('soluong')
+
+        # cutomer = request.user
+        payment = Payment_VNPay.objects.create(
+            order_id = order_id,
+            amount = amount,
+            order_desc = order_desc,
+            vnp_TransactionNo = vnp_TransactionNo,
+            vnp_ResponseCode = vnp_ResponseCode
+        )
+
+        # Tạo đối tượng HoaDon
+        hoa_don = HoaDon.objects.create(
+            id=payment.order_id,
+            user=cutomer,# Giả sử user là một ID, cập nhật nếu cần thi
+            # thanhtoan= payment.id
+        )
+
+        # Tạo đối tượng ChiTietHoaDon
+        chi_tiet_hoa_don = ChiTietHoaDon.objects.create(
+            hoadon=hoa_don,
+            phong_id=phong_id,
+            ngay_gio_nhan =ngay_gio_nhan ,
+            ngay_gio_tra =ngay_gio_tra,
+            
+            soluong=soluong,
+            dongia=amount
+        )
+
+        if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
+            if vnp_ResponseCode == "00":
+                return render(request, "payment/payment_return.html", {"title": "Kết quả thanh toán",
+                                                               "result": "Thành công", "order_id": order_id,
+                                                               "amount": amount,
+                                                               "order_desc": order_desc,
+                                                               "vnp_TransactionNo": vnp_TransactionNo,
+                                                               "vnp_ResponseCode": vnp_ResponseCode})
+            else:
+                return render(request, "payment/payment_return.html", {"title": "Kết quả thanh toán",
+                                                               "result": "Lỗi", "order_id": order_id,
+                                                               "amount": amount,
+                                                               "order_desc": order_desc,
+                                                               "vnp_TransactionNo": vnp_TransactionNo,
+                                                               "vnp_ResponseCode": vnp_ResponseCode})
+        else:
+            return render(request, "payment/payment_return.html",
+                          {"title": "Kết quả thanh toán", "result": "Lỗi", "order_id": order_id, "amount": amount,
+                           "order_desc": order_desc, "vnp_TransactionNo": vnp_TransactionNo,
+                           "vnp_ResponseCode": vnp_ResponseCode, "msg": "Sai checksum"})
+    else:
+        return render(request, "payment/payment_return.html", {"title": "Kết quả thanh toán", "result": ""})
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+n = random.randint(10**11, 10**12 - 1)
+n_str = str(n)
+while len(n_str) < 12:
+    n_str = '0' + n_str
+
+
+def query(request):
+    if request.method == 'GET':
+        return render(request, "payment/query.html", {"title": "Kiểm tra kết quả giao dịch"})
+
+    url = settings.VNPAY_API_URL
+    secret_key = settings.VNPAY_HASH_SECRET_KEY
+    vnp_TmnCode = settings.VNPAY_TMN_CODE
+    vnp_Version = '2.1.0'
+
+    vnp_RequestId = n_str
+    vnp_Command = 'querydr'
+    vnp_TxnRef = request.POST['order_id']
+    vnp_OrderInfo = 'kiem tra gd'
+    vnp_TransactionDate = request.POST['trans_date']
+    vnp_CreateDate = datetime.now().strftime('%Y%m%d%H%M%S')
+    vnp_IpAddr = get_client_ip(request)
+
+    hash_data = "|".join([
+        vnp_RequestId, vnp_Version, vnp_Command, vnp_TmnCode,
+        vnp_TxnRef, vnp_TransactionDate, vnp_CreateDate,
+        vnp_IpAddr, vnp_OrderInfo
+    ])
+
+    secure_hash = hmac.new(secret_key.encode(), hash_data.encode(), hashlib.sha512).hexdigest()
+
+    data = {
+        "vnp_RequestId": vnp_RequestId,
+        "vnp_TmnCode": vnp_TmnCode,
+        "vnp_Command": vnp_Command,
+        "vnp_TxnRef": vnp_TxnRef,
+        "vnp_OrderInfo": vnp_OrderInfo,
+        "vnp_TransactionDate": vnp_TransactionDate,
+        "vnp_CreateDate": vnp_CreateDate,
+        "vnp_IpAddr": vnp_IpAddr,
+        "vnp_Version": vnp_Version,
+        "vnp_SecureHash": secure_hash
+    }
+
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+
+    if response.status_code == 200:
+        response_json = json.loads(response.text)
+    else:
+        response_json = {"error": f"Request failed with status code: {response.status_code}"}
+
+    return render(request, "payment/query.html", {"title": "Kiểm tra kết quả giao dịch", "response_json": response_json})
+
+def refund(request):
+    if request.method == 'GET':
+        return render(request, "payment/refund.html", {"title": "Hoàn tiền giao dịch"})
+
+    url = settings.VNPAY_API_URL
+    secret_key = settings.VNPAY_HASH_SECRET_KEY
+    vnp_TmnCode = settings.VNPAY_TMN_CODE
+    vnp_RequestId = n_str
+    vnp_Version = '2.1.0'
+    vnp_Command = 'refund'
+    vnp_TransactionType = request.POST['TransactionType']
+    vnp_TxnRef = request.POST['order_id']
+    vnp_Amount = request.POST['amount']
+    vnp_OrderInfo = request.POST['order_desc']
+    vnp_TransactionNo = '0'
+    vnp_TransactionDate = request.POST['trans_date']
+    vnp_CreateDate = datetime.now().strftime('%Y%m%d%H%M%S')
+    vnp_CreateBy = 'user01'
+    vnp_IpAddr = get_client_ip(request)
+
+    hash_data = "|".join([
+        vnp_RequestId, vnp_Version, vnp_Command, vnp_TmnCode, vnp_TransactionType, vnp_TxnRef,
+        vnp_Amount, vnp_TransactionNo, vnp_TransactionDate, vnp_CreateBy, vnp_CreateDate,
+        vnp_IpAddr, vnp_OrderInfo
+    ])
+
+    secure_hash = hmac.new(secret_key.encode(), hash_data.encode(), hashlib.sha512).hexdigest()
+
+    data = {
+        "vnp_RequestId": vnp_RequestId,
+        "vnp_TmnCode": vnp_TmnCode,
+        "vnp_Command": vnp_Command,
+        "vnp_TxnRef": vnp_TxnRef,
+        "vnp_Amount": vnp_Amount,
+        "vnp_OrderInfo": vnp_OrderInfo,
+        "vnp_TransactionDate": vnp_TransactionDate,
+        "vnp_CreateDate": vnp_CreateDate,
+        "vnp_IpAddr": vnp_IpAddr,
+        "vnp_TransactionType": vnp_TransactionType,
+        "vnp_TransactionNo": vnp_TransactionNo,
+        "vnp_CreateBy": vnp_CreateBy,
+        "vnp_Version": vnp_Version,
+        "vnp_SecureHash": secure_hash
+    }
+
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+
+    if response.status_code == 200:
+        response_json = json.loads(response.text)
+    else:
+        response_json = {"error": f"Request failed with status code: {response.status_code}"}
+
+    return render(request, "payment/refund.html", {"title": "Kết quả hoàn tiền giao dịch", "response_json": response_json})

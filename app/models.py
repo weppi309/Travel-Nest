@@ -1,3 +1,4 @@
+from django import forms
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
@@ -94,6 +95,8 @@ class DichVu(ModelBase):
     
 class HoaDon(ModelBase):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
+    thanh_toan = models.ForeignKey('Payment_VNPay', on_delete=models.SET_NULL, null=True, blank=True)
+
 
 class ChiTietHoaDon(ModelBase):
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True)
@@ -113,3 +116,18 @@ class KhuyenMai(ModelBase):
     thoigian_kt = models.DateTimeField()
     giatri_km = models.FloatField()
     phong = models.ManyToManyField(Phong, blank=True)
+
+class Payment_VNPay(models.Model):
+    order_id = models.BigIntegerField(default=0, null=True, blank=True)
+    amount = models.FloatField(default=0.0, null=True, blank=True)
+    order_desc = models.CharField(max_length=200,null=True, blank=True)
+    vnp_TransactionNo = models.CharField(max_length=200,null=True, blank=True)
+    vnp_ResponseCode = models.CharField(max_length=200,null=True, blank=True)
+
+class PaymentForm(forms.Form):
+    order_id = forms.CharField(max_length=250)
+    order_type = forms.CharField(max_length=20)
+    amount = forms.IntegerField()
+    order_desc = forms.CharField(max_length=100)
+    bank_code = forms.CharField(max_length=20, required=False)
+    language = forms.CharField(max_length=2)

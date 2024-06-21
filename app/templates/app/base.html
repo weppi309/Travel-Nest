@@ -46,14 +46,11 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Đã lưu</a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" href="#">Hỗ trợ</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" >Chuyến đi</a>
-                {% comment %} href="{%url 'dondatphong'%}" {% endcomment %}
+                <a class="nav-link" href="{%url 'dondatphong'%}">Chuyến đi</a>
+                {% comment %}  {% endcomment %}
               </li>
               <li class="nav-item dropdown">
                 <div class="dropdown">
@@ -155,7 +152,7 @@
       <script src="https://kit.fontawesome.com/caaa2eeb69.js" crossorigin="anonymous"></script>
       <script src="{% static 'app/js/newscript.js'%}"></script>
       <script src="{% static 'app/js/search.js'%}"></script>
-      <script src="{% static 'app/js/datphong.js'%}"></script>
+      {% comment %} <script src="{% static 'app/js/datphong.js'%}"></script> {% endcomment %}
       <script src="{% static 'app/js/map.js'%}"></script>
       <script src="{% static 'app/js/scroll.js'%}"></script>
 

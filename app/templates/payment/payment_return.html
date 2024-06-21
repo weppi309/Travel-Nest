@@ -1,0 +1,139 @@
+{% extends "payment/base_layout.html" %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ title }}: {{ result }}</div>
+        <div class="panel-body">
+            <p>order_id:{{ order_id }}</p>
+            <p>amount:{{ amount }}</p>
+            <p>order_desc:{{ order_desc }}</p>
+            <p>vnp_TransactionNo:{{ vnp_TransactionNo }}</p>
+            {% if vnp_ResponseCode == '00' %}
+                <p>vnp_ResponseCode: {{ vnp_ResponseCode }} - Thành công</p>
+            {% else %}
+                <p>vnp_ResponseCode: {{ vnp_ResponseCode }} - Lỗi</p>
+            {% endif %}
+            {% if msg %}
+                <p class="alert-warning"> {{ msg }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <form method="POST" action="{% url 'dondatphong'%}">
+        {% csrf_token %}
+        <input type="hidden" id="user" name="user" value="">
+        <input type="hidden" id="ngay_nhan" name="ngay_nhan" value="">
+        <input type="hidden" id="ngay_tra" name="ngay_tra" value="">
+        <input type="hidden" id="so_luong_dem" name="so_luong_dem" value="">
+        <input type="hidden" id="phong_id" name="phong_id" value="">
+        <input type="hidden" id="dongia" name="dongia" value="">
+        <button type="submit" >Xem chi tiết hóa đơn</button>
+    </form>
+    <script>
+            // Đọc giá trị từ cookie
+        function getCookie(name) {
+            var cookieArr = document.cookie.split(';');
+            for (var i = 0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split('=');
+                var key = cookiePair[0].trim();
+                if (key === name) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+
+        // Lấy giá trị từ cookie
+        var totalPrice = getCookie('totalPrice');
+        var user = getCookie('user');
+        var phong_id = getCookie('phong_id');
+        var ngay_gio_nhan = getCookie('ngay_gio_nhan');
+        var ngay_gio_tra = getCookie('ngay_gio_tra');
+        var soluong = getCookie('soluong');
+
+        // Sử dụng các giá trị lấy từ cookie để đặt phòng mới
+        console.log('Total Price:', totalPrice);
+        console.log('User:', user);
+        console.log('Phong ID:', phong_id);
+        console.log('Ngay gio nhan:', ngay_gio_nhan);
+        console.log('Ngay gio tra:', ngay_gio_tra);
+        console.log('So luong:', soluong);
+        {% comment %} var user = localStorage.getItem("user");
+        var ngay_nhan = localStorage.getItem("ngay_nhan");
+        var ngay_tra = localStorage.getItem("ngay_tra");
+        var so_luong_dem = localStorage.getItem("so_luong_dem");
+        var phong_id = localStorage.getItem("phong_id");
+        var dongia = localStorage.getItem("dongia");
+
+        // Gán các giá trị vào các trường input của form
+        document.getElementById("user").value = user;
+        document.getElementById("ngay_nhan").value = ngay_nhan;
+        document.getElementById("ngay_tra").value = ngay_tra;
+        document.getElementById("so_luong_dem").value = so_luong_dem;
+        document.getElementById("phong_id").value = phong_id;
+        document.getElementById("dongia").value = dongia;
+
+        // Kiểm tra xem giá trị đã được gán vào form hay chưa
+        console.log("User:", user);
+        console.log("Ngày nhận:", ngay_nhan);
+        console.log("Ngày trả:", ngay_tra);
+        console.log("Số lượng đêm:", so_luong_dem);
+        console.log("Phòng ID:", phong_id);
+        console.log("Đơn giá:", dongia); {% endcomment %}
+
+        {% comment %} function createBillFromSessionStorage() {
+            // Lấy thông tin từ sessionStorage
+
+            let phong_id = sessionStorage.getItem('phong_id');
+            let ngay_gio_nhan = sessionStorage.getItem('ngay_gio_nhan');
+            let ngay_gio_tra = sessionStorage.getItem('ngay_gio_tra');
+            let soluong = sessionStorage.getItem('soluong');
+            let dongia = sessionStorage.getItem('totalPrice');
+        } {% endcomment %}
+
+        {% comment %} var user = sessionStorage.getItem("user");
+        var phong_id = sessionStorage.getItem("phong_id");
+        var ngay_gio_nhan = sessionStorage.getItem("ngay_gio_nhan");
+        var ngay_gio_tra = sessionStorage.getItem("ngay_gio_tra");
+        var soluong = sessionStorage.getItem("soluong");
+        var dongia= sessionStorage.getItem("totalPrice");
+
+        document.getElementById("user").value = user;
+        document.getElementById("ngay_nhan").value = ngay_gio_nhan;
+        document.getElementById("ngay_tra").value = ngay_gio_tra;
+        document.getElementById("so_luong_dem").value = soluong;
+        document.getElementById("phong_id").value = phong_id;
+        document.getElementById("dongia").value = dongia;
+
+
+        console.log("User:", user);
+        console.log("Phong ID:", phong_id);
+        console.log("Ngay nhan:", ngay_gio_nhan);
+        console.log("Ngay tra:", ngay_gio_tra);
+        console.log("So luong:", soluong);
+        console.log("Dongia:", dongia); {% endcomment %}
+
+        // Lấy thông tin từ sessionStorage
+    {% comment %} var chiTietHoaDonString = sessionStorage.getItem('chiTietHoaDon');
+    if (chiTietHoaDonString) {
+        var chiTietHoaDon = JSON.parse(chiTietHoaDonString);
+        
+        // Gửi thông tin lên server
+        $.ajax({
+            url: '/api/luu-chi-tiet-hoa-don/', // Đổi đường dẫn tới API lưu chi tiết hóa đơn
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(chiTietHoaDon),
+            success: function(response) {
+                console.log('Lưu chi tiết hóa đơn thành công');
+                // Xóa thông tin từ sessionStorage sau khi lưu thành công (tuỳ vào yêu cầu của bạn)
+                
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi lưu chi tiết hóa đơn:', error);
+            }
+        });
+    } else {
+        console.error('Không tìm thấy thông tin chi tiết hóa đơn trong sessionStorage');
+    } {% endcomment %}
+    </script>
+    {% comment %} sessionStorage.removeItem('chiTietHoaDon'); {% endcomment %}
+{% endblock %}
