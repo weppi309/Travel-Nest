@@ -443,13 +443,14 @@ def payment_return(request):
 
         # Lấy giá trị từ cookie
         # totalPrice = request.COOKIES.get('totalPrice')
-        # user = request.COOKIES.get('user')
+        user = request.COOKIES.get('user')
+        cutomer= User.objects.get(username=user)
         phong_id = request.COOKIES.get('phong_id')
         ngay_gio_nhan = request.COOKIES.get('ngay_gio_nhan')
         ngay_gio_tra = request.COOKIES.get('ngay_gio_tra')
         soluong = request.COOKIES.get('soluong')
 
-        cutomer = request.user
+        # cutomer = request.user
         payment = Payment_VNPay.objects.create(
             order_id = order_id,
             amount = amount,
