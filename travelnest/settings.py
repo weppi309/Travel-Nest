@@ -223,7 +223,8 @@ JAZZMIN_SETTINGS = {
 }
 
 #payment
-VNPAY_RETURN_URL = 'http://localhost:8000/payment_return'
+# VNPAY_RETURN_URL = 'http://localhost:8000/payment_return'
+VNPAY_RETURN_URL = 'https://web-production-7fc2.up.railway.app/payment_return'
 VNPAY_PAYMENT_URL ='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
 VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
 VNPAY_TMN_CODE ='I1TDDTC5'
