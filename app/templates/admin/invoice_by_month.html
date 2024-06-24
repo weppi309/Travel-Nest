@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Invoices by Month</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stat in invoice_stats %}
+        <tr>
+            <td>{{ stat.month|date:"Y-m" }}</td>
+            <td>{{ stat.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>User Role Statistics</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stat in role_stats %}
+        <tr>
+            <td>{{ stat.role }}</td>
+            <td>{{ stat.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

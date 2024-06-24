@@ -156,3 +156,68 @@ CORS_ALLOW_ALL_ORIGINS = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+JAZZMIN_SETTINGS = {
+    # "site_title": "My Admin",
+    # "site_header": "My Admin",
+    # "welcome_sign": "Welcome to My Admin",
+    "search_model": "app.User",
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["app.view_user"]},
+        {"model": "app.User"},
+        {"app": "app"},
+    ],
+    "usermenu_links": [
+        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": ["app.anhkhachsan","app.anhphong"],
+    "order_with_respect_to": ["app", "app", "app.user"],
+    "custom_links": {
+        "app": [
+            {"name": "User Role Stats", "url": "admin:user_role_stats", "icon": "fas fa-users"},
+            {"name": "Hotel by Tinh", "url": "admin:hotel_by_tinh", "icon": "fas fa-hotel"},
+            {"name": "Room by Hotel", "url": "admin:room_by_hotel", "icon": "fas fa-bed"},
+            {"name": "Invoice by Month", "url": "admin:invoice_by_month", "icon": "fas fa-file-invoice"},
+            {"name": "Revenue by Month", "url": "admin:revenue_by_month", "icon": "fas fa-dollar-sign"},
+            {"name": "Hotel Rating", "url": "admin:hotel_rating", "icon": "fas fa-star"},
+            {"name": "Current Promotions", "url": "admin:current_promotions", "icon": "fas fa-tags"},
+        ]
+    },
+    # "custom_links": {
+    #     "app": [
+    #         {"name": "User Role Stats", "url": "admin:custom_user_role_stats", "icon": "fas fa-users"},
+    #         {"name": "Hotel by Tinh", "url": "admin:custom_hotel_by_tinh", "icon": "fas fa-hotel"},
+    #         {"name": "Room by Hotel", "url": "admin:custom_room_by_hotel", "icon": "fas fa-bed"},
+    #         {"name": "Invoice by Month", "url": "admin:custom_invoice_by_month", "icon": "fas fa-file-invoice"},
+    #         {"name": "Revenue by Month", "url": "admin:custom_revenue_by_month", "icon": "fas fa-dollar-sign"},
+    #         {"name": "Hotel Rating", "url": "admin:custom_hotel_rating", "icon": "fas fa-star"},
+    #         {"name": "Current Promotions", "url": "admin:custom_current_promotions", "icon": "fas fa-tags"},
+    #     ]
+    # },
+    # # Customize which apps appear (tùy chọn)
+    # 'navigation': [
+    #     {'app': 'auth', 'model': 'user'},
+    #     'app',  # Thay 'myapp' bằng tên ứng dụng của bạn
+    # ],
+
+    # # Customize which views appear (tùy chọn)
+    # 'site_menu': [
+    #     {'name': 'Dashboard', 'url': 'admin:index', 'permissions': ['app.view_user']},
+    #     {'name': 'User Role Stats', 'url': 'admin:user_role_stats', 'permissions': ['app.view_user_role_stats']},
+    #     {'name': 'Hotel By Tinh', 'url': 'admin:hotel_by_tinh', 'permissions': ['app.view_hotel_by_tinh']},
+    #     {'name': 'Room By Hotel', 'url': 'admin:room_by_hotel', 'permissions': ['app.view_room_by_hotel']},
+    #     {'name': 'Invoice By Month', 'url': 'admin:invoice_by_month', 'permissions': ['app.view_invoice_by_month']},
+    #     {'name': 'Revenue By Month', 'url': 'admin:revenue_by_month', 'permissions': ['app.view_revenue_by_month']},
+    #     {'name': 'Hotel Rating', 'url': 'admin:hotel_rating', 'permissions': ['app.view_hotel_rating']},
+    #     {'name': 'Current Promotions', 'url': 'admin:current_promotions', 'permissions': ['app.view_current_promotions']},
+    # ],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "app.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+}

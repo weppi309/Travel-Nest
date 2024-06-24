@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Revenue by Month</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Revenue</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stat in revenue_stats %}
+        <tr>
+            <td>{{ stat.month|date:"Y-m" }}</td>
+            <td>{{ stat.revenue }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

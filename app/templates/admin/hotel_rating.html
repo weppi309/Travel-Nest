@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Hotel Ratings</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Hotel</th>
+            <th>Average Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stat in rating_stats %}
+        <tr>
+            <td>{{ stat.hoadon__khachsan__tenkhachsan }}</td>
+            <td>{{ stat.avg_rating }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

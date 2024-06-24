@@ -322,3 +322,44 @@ def dashboard(request):
     }
     
     return render(request, 'pages/dashboard.html', context)
+
+from django.db.models import Count, Avg, Sum
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
+@staff_member_required
+def user_role_stats_view(request):
+    role_stats = User.objects.values('role').annotate(count=Count('id'))
+    context = {'role_stats': role_stats}
+    return render(request, 'admin/user_role_stats.html', context)
+@staff_member_required
+def hotel_by_tinh_view(request):
+    hotel_stats = KhachSan.objects.values('tinh__tentinh').annotate(count=Count('id'))
+    context = {'hotel_stats': hotel_stats}
+    return render(request, 'admin/hotel_by_tinh.html', context)
+@staff_member_required
+def room_by_hotel_view(request):
+    room_stats = Phong.objects.values('khachsan__tenkhachsan').annotate(count=Count('id'))
+    context = {'room_stats': room_stats}
+    return render(request, 'admin/room_by_hotel.html', context)
+@staff_member_required
+def invoice_by_month_view(request):
+    invoice_stats = HoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(count=Count('id'))
+    context = {'invoice_stats': invoice_stats}
+    return render(request, 'admin/invoice_by_month.html', context)
+@staff_member_required
+def revenue_by_month_view(request):
+    revenue_stats = ChiTietHoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(revenue=Sum('dongia'))
+    context = {'revenue_stats': revenue_stats}
+    return render(request, 'admin/revenue_by_month.html', context)
+@staff_member_required
+def hotel_rating_view(request):
+    rating_stats = Danhgia.objects.values('hoadon__khachsan__tenkhachsan').annotate(avg_rating=Avg('diem'))
+    context = {'rating_stats': rating_stats}
+    return render(request, 'admin/hotel_rating.html', context)
+@staff_member_required
+def current_promotions_view(request):
+    current_date = timezone.now()
+    promotions = KhuyenMai.objects.filter(thoigian_bd__lte=current_date, thoigian_kt__gte=current_date)
+    context = {'promotions': promotions}
+    return render(request, 'admin/current_promotions.html', context)

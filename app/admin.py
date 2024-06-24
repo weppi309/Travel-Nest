@@ -1,6 +1,30 @@
 from django.contrib import admin
+
+from app.views import current_promotions_view, hotel_by_tinh_view, hotel_rating_view, invoice_by_month_view, revenue_by_month_view, room_by_hotel_view, user_role_stats_view
 from .models import *
-# Register your models here.
+# from django.urls import reverse
+# from django.utils.html import format_html
+
+class CustomAdminSite(admin.AdminSite):
+    site_header = 'Travel Nest AdminSite'
+    site_title = 'Admin'
+    index_title = 'Welcome to Travel Nest Admin Site'
+
+    def get_urls(self):
+        from django.urls import path
+        urls = super().get_urls()
+        custom_urls = [
+            path('user-role-stats/', self.admin_view(user_role_stats_view), name='user_role_stats'),
+            path('hotel-by-tinh/', self.admin_view(hotel_by_tinh_view), name='hotel_by_tinh'),
+            path('room-by-hotel/', self.admin_view(room_by_hotel_view), name='room_by_hotel'),
+            path('invoice-by-month/', self.admin_view(invoice_by_month_view), name='invoice_by_month'),
+            path('revenue-by-month/', self.admin_view(revenue_by_month_view), name='revenue_by_month'),
+            path('hotel-rating/', self.admin_view(hotel_rating_view), name='hotel_rating'),
+            path('current-promotions/', self.admin_view(current_promotions_view), name='current_promotions'),
+        ]
+        return custom_urls + urls
+
+admin_site = CustomAdminSite(name='custom_admin')
 class KhachSanInline(admin.TabularInline):
     model = KhachSan
     extra = 1
@@ -70,7 +94,7 @@ class UserAdmin(admin.ModelAdmin):
         if 'password' in form.changed_data:
             obj.set_password(form.cleaned_data['password'])
         super().save_model(request, obj, form, change)
-admin.site.register(User, UserAdmin)
+admin_site.register(User, UserAdmin)
 class AnhPhongInline(admin.TabularInline):
     model = AnhPhong
 class PhongAdmin(admin.ModelAdmin):
@@ -127,16 +151,38 @@ class KhachSanAdmin(admin.ModelAdmin):
         return super().has_add_permission(request)
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'owner':
-            kwargs['initial'] = request.user.id  # Thiết lập owner mặc định là provider đang đăng nhập
-            kwargs['queryset'] = User.objects.filter(id=request.user.id)
+            if request.user.role == 'provider':
+                kwargs['initial'] = request.user.id  # Thiết lập owner mặc định là provider đang đăng nhập
+                kwargs['queryset'] = User.objects.filter(id=request.user.id)
+            else:
+                # Lọc danh sách owner chỉ bao gồm những người dùng có vai trò 'provider'
+                kwargs['queryset'] = User.objects.filter(role='provider')
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if obj is not None:
+        if request.user.role == 'provider':
             form.base_fields['owner'].queryset = User.objects.filter(id=request.user.id)
+            if obj is None:  # Khi thêm mới
+                form.base_fields['owner'].initial = request.user
+            form.base_fields['owner'].disabled = True
+        else:
+            form.base_fields['owner'].queryset = User.objects.filter(role='provider')
         return form
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     if db_field.name == 'owner' and request.user.role == 'provider':
+    #         kwargs['initial'] = request.user.id  # Thiết lập owner mặc định là provider đang đăng nhập
+    #         kwargs['queryset'] = User.objects.filter(id=request.user.id)
+    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     if request.user.role == 'provider':
+    #         form.base_fields['owner'].queryset = User.objects.filter(id=request.user.id)
+    #         if obj is None:  # Khi thêm mới
+    #             form.base_fields['owner'].initial = request.user
+    #         form.base_fields['owner'].disabled = True
+    #     return form
 class TinhAdmin(admin.ModelAdmin):
     list_display=('id','tentinh','created_date','active')
 class HuyenAdmin(admin.ModelAdmin):
@@ -320,17 +366,75 @@ class DanhGiaAdmin(admin.ModelAdmin):
 class KhuyenMaiAdmin(admin.ModelAdmin):
     list_display=('id','tenkhuyenmai','thoigian_bd','thoigian_kt','giatri_km','created_date','active')
 
-admin.site.register(Tinh,TinhAdmin)
-admin.site.register(Huyen,HuyenAdmin)
-admin.site.register(Xa,XaAdmin)
-admin.site.register(KhachSan,KhachSanAdmin)
-admin.site.register(Phong,PhongAdmin)
-admin.site.register(AnhPhong,AnhPhongAdmin)
-admin.site.register(AnhKhachSan,AnhKhachSanAdmin)
-admin.site.register(TienNghi,TienNghiAdmin)
-admin.site.register(LoaiTienNghi,LoaiTienNghiAdmin)
-admin.site.register(DichVu,DichVuAdmin)
-admin.site.register(HoaDon,HoaDonAdmin)
+admin_site.register(Tinh,TinhAdmin)
+admin_site.register(Huyen,HuyenAdmin)
+admin_site.register(Xa,XaAdmin)
+admin_site.register(KhachSan,KhachSanAdmin)
+admin_site.register(Phong,PhongAdmin)
+admin_site.register(AnhPhong,AnhPhongAdmin)
+admin_site.register(AnhKhachSan,AnhKhachSanAdmin)
+admin_site.register(TienNghi,TienNghiAdmin)
+admin_site.register(LoaiTienNghi,LoaiTienNghiAdmin)
+admin_site.register(DichVu,DichVuAdmin)
+admin_site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)
-admin.site.register(Danhgia,DanhGiaAdmin)
-admin.site.register(KhuyenMai,KhuyenMaiAdmin)
+admin_site.register(Danhgia,DanhGiaAdmin)
+admin_site.register(KhuyenMai,KhuyenMaiAdmin)
+
+# from django.db.models import Count
+# from django.shortcuts import render
+# from django.urls import path
+# from django.contrib import admin
+# from .models import User
+
+# def user_role_stats_view(request):
+#     role_stats = User.objects.values('role').annotate(count=Count('id'))
+#     context = {'role_stats': role_stats}
+#     return render(request, 'admin/user_role_stats.html', context)
+
+# admin.site.register_view('user-role-stats/', view=user_role_stats_view, name='User Role Statistics')
+# def hotel_by_tinh_view(request):
+#     hotel_stats = KhachSan.objects.values('tinh__tentinh').annotate(count=Count('id'))
+#     context = {'hotel_stats': hotel_stats}
+#     return render(request, 'admin/hotel_by_tinh.html', context)
+
+# admin.site.register_view('hotel-by-tinh/', view=hotel_by_tinh_view, name='Hotel by Tinh')
+# def room_by_hotel_view(request):
+#     room_stats = Phong.objects.values('khachsan__tenkhachsan').annotate(count=Count('id'))
+#     context = {'room_stats': room_stats}
+#     return render(request, 'admin/room_by_hotel.html', context)
+
+# admin.site.register_view('room-by-hotel/', view=room_by_hotel_view, name='Room by Hotel')
+# from django.db.models.functions import TruncMonth
+
+# def invoice_by_month_view(request):
+#     invoice_stats = HoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(count=Count('id'))
+#     context = {'invoice_stats': invoice_stats}
+#     return render(request, 'admin/invoice_by_month.html', context)
+
+# admin.site.register_view('invoice-by-month/', view=invoice_by_month_view, name='Invoice by Month')
+# from django.db.models import Sum
+
+# def revenue_by_month_view(request):
+#     revenue_stats = ChiTietHoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(revenue=Sum('dongia'))
+#     context = {'revenue_stats': revenue_stats}
+#     return render(request, 'admin/revenue_by_month.html', context)
+
+# admin.site.register_view('revenue-by-month/', view=revenue_by_month_view, name='Revenue by Month')
+# from django.db.models import Avg
+
+# def hotel_rating_view(request):
+#     rating_stats = Danhgia.objects.values('hoadon__khachsan__tenkhachsan').annotate(avg_rating=Avg('diem'))
+#     context = {'rating_stats': rating_stats}
+#     return render(request, 'admin/hotel_rating.html', context)
+
+# admin.site.register_view('hotel-rating/', view=hotel_rating_view, name='Hotel Rating')
+# from django.utils import timezone
+
+# def current_promotions_view(request):
+#     current_date = timezone.now()
+#     promotions = KhuyenMai.objects.filter(thoigian_bd__lte=current_date, thoigian_kt__gte=current_date)
+#     context = {'promotions': promotions}
+#     return render(request, 'admin/current_promotions.html', context)
+
+# admin.site.register_view('current-promotions/', view=current_promotions_view, name='Current Promotions')

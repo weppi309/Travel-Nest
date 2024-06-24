@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Rooms by Hotel</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Hotel</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stat in room_stats %}
+        <tr>
+            <td>{{ stat.khachsan__tenkhachsan }}</td>
+            <td>{{ stat.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

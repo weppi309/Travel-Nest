@@ -420,7 +420,6 @@
       <p>TravelNest.com</p>
     </div>
 
-
   </div>
 </div>
 <script>
@@ -435,59 +434,6 @@
   var mapImage = document.getElementById("map-image");
   mapImage.src = mapUrl;
 </script>
-
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('click', function(event) {
-            var target = event.target;
-            if (target.classList.contains('dropdown-item')) {
-                var value = target.value;
-                var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                button.innerText = value;
-            }
-        });
-    });
-});
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-    var priceContent = document.getElementById('price-content');
-
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        var totalAmount = 0;
-        dropdowns.forEach(function(dropdown) {
-            var selectedQuantity = parseInt(dropdown.closest('tr').querySelector('.dropdown-toggle').innerText.trim());
-            var pricePerRoomElement = dropdown.querySelector('.giaphong');
-            var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim()) : 0;
-            var roomTotalPrice = selectedQuantity * pricePerRoom;
-            totalAmount += roomTotalPrice;
-        });
-        return totalAmount;
-    }
-
-    // Function to update price content
-    function updatePriceContent() {
-        var totalPrice = calculateTotalPrice();
-        priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-    }
-
-    // Event listener for dropdown menu to update total price
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('click', function(event) {
-            var target = event.target;
-            if (target.classList.contains('dropdown-item')) {
-                updatePriceContent();
-            }
-        });
-    });
-});
-</script> {% endcomment %}
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     var dropdowns = document.querySelectorAll('.dropdown-menu');
@@ -535,115 +481,6 @@
     
   });
 </script> 
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      var dropdowns = document.querySelectorAll('.dropdown-menu');
-      var priceContent = document.getElementById('price-content');
-
-      dropdowns.forEach(function(dropdown) {
-          if (dropdown) {
-              dropdown.addEventListener('click', function(event) {
-                  var target = event.target;
-                  if (target.classList.contains('dropdown-item')) {
-                      var value = target.value;
-                      var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                      var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                      button.innerText = value;
-
-                      // Update price content only if pricePerRoomElement exists
-                      var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                      if (pricePerRoomElement) {
-                          updatePriceContent();
-                      }
-                  }
-              });
-          }
-      });
-
-      // Function to calculate total price
-      function calculateTotalPrice() {
-          var totalAmount = 0;
-          dropdowns.forEach(function(dropdown) {
-              var selectedQuantityElement = dropdown.querySelector('.dropdown-item.active');
-              if (selectedQuantityElement) {
-                  var selectedQuantity = parseInt(selectedQuantityElement.textContent.trim());
-                  var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                  var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim().replace(/[^\d.-]/g, '')):0;
-                  var roomTotalPrice = selectedQuantity * pricePerRoom;
-                  totalAmount += roomTotalPrice;
-              }
-          });
-          return totalAmount;
-      }
-
-      // Function to update price content
-      function updatePriceContent() {
-          var totalPrice = calculateTotalPrice();
-          priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-      }
-  });
-</script> {% endcomment %}
-{% comment %} <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-    var priceContent = document.getElementById('price-content');
-    var bookingForm = document.getElementById('bookingForm');
-    var bookingDataInput = document.getElementById('bookingData');
-
-    // Function to calculate total price
-    function calculateTotalPrice() {
-        var totalAmount = 0;
-        var bookingData = [];
-        dropdowns.forEach(function(dropdown) {
-            var button = dropdown.previousElementSibling;
-            var selectedQuantity = parseInt(selectedQuantityElement.textContent.trim());
-            var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-            var pricePerRoom = pricePerRoomElement ? parseFloat(pricePerRoomElement.textContent.trim().replace(/[^\d.-]/g, '')):0;
-            var roomTotalPrice = selectedQuantity * pricePerRoom;
-            totalAmount += roomTotalPrice;
-
-            if (selectedValue && !isNaN(pricePerRoom)) {
-                bookingData.push({
-                    roomType: dropdown.closest('tr').querySelector('th > div').textContent.trim(),
-                    quantity: parseInt(selectedValue),
-                    price: pricePerRoom,
-                    total: roomTotalPrice
-                });
-            }
-        });
-        bookingDataInput.value = JSON.stringify(bookingData);
-        return totalAmount;
-    }
-
-    // Function to update price content
-    function updatePriceContent() {
-        var totalPrice = calculateTotalPrice();
-        priceContent.innerHTML = 'Tổng tiền: ' + totalPrice + ' VND';
-    }
-
-    // Event listener for dropdown menu
-    dropdowns.forEach(function(dropdown) {
-      if (dropdown) {
-          dropdown.addEventListener('click', function(event) {
-              var target = event.target;
-              if (target.classList.contains('dropdown-item')) {
-                  var value = target.value;
-                  var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                  var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                  button.innerText = value;
-
-                  // Update price content only if pricePerRoomElement exists
-                  var pricePerRoomElement = dropdown.closest('tr').querySelector('.giaphong');
-                  if (pricePerRoomElement) {
-                      updatePriceContent();
-                  }
-              }
-          });
-      }
-  });
-
-});
-</script> {% endcomment %}
 <script>
   // JavaScript to handle booking form submission
   document.getElementById('datPhongButton').addEventListener('click', function(event) {

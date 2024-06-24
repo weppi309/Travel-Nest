@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Current Promotions</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Promotion</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for promo in promotions %}
+        <tr>
+            <td>{{ promo.tenkhuyenmai }}</td>
+            <td>{{ promo.thoigian_bd }}</td>
+            <td>{{ promo.thoigian_kt }}</td>
+            <td>{{ promo.giatri_km }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
