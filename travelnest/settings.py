@@ -221,3 +221,10 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
 }
+
+#payment
+VNPAY_RETURN_URL = 'http://localhost:8000/payment_return'
+VNPAY_PAYMENT_URL ='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+VNPAY_API_URL = 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+VNPAY_TMN_CODE ='I1TDDTC5'
+VNPAY_HASH_SECRET_KEY ='WYEK2R3W4FO4N5JJ9OEHJW64JYPKYXNF'

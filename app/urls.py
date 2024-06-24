@@ -26,6 +26,13 @@ urlpatterns = [
     # # path('custom-profile/', views.profile, name='custom_profile'),
     # path('customer-dashboard/', views.dashboard, name='customer_dashboard'),
     # path('edit-profile/', views.edit_profile, name='edit_profile'),
+
+    path('pay', views.index_payment, name='index'),
+    path('payment', views.payment, name='payment'),
+    path('payment_ipn', views.payment_ipn, name='payment_ipn'),
+    path('payment_return', views.payment_return, name='payment_return'),
+    path('query', views.query, name='query'),
+    path('refund', views.refund, name='refund'),
     path('user_role_stats/', views.user_role_stats_view, name='user_role_stats'),
     path('hotel_by_tinh/', views.hotel_by_tinh_view, name='hotel_by_tinh'),
     path('room_by_hotel/', views.room_by_hotel_view, name='room_by_hotel'),
