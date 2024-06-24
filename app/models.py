@@ -96,7 +96,21 @@ class DichVu(ModelBase):
 class HoaDon(ModelBase):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
     thanh_toan = models.ForeignKey('Payment_VNPay', on_delete=models.SET_NULL, null=True, blank=True)
-
+    CHUA_THANH_TOAN = 'CTT'
+    DA_NHAN_PHONG = 'DNP'
+    DA_HUY = 'DH'
+    
+    TRANGTHAI_CHOICES = [
+        (CHUA_THANH_TOAN, 'Chưa thanh toán'),
+        (DA_NHAN_PHONG, 'Đã nhận phòng'),
+        (DA_HUY, 'Đã hủy'),
+    ]
+    
+    trangthai = models.CharField(
+        max_length=3,
+        choices=TRANGTHAI_CHOICES,
+        default=CHUA_THANH_TOAN,
+    )
 
 class ChiTietHoaDon(ModelBase):
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True)

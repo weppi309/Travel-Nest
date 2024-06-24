@@ -23,6 +23,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin_site.urls),
     path('', include('app.urls')),
-    path('admin/custom/', include('app.urls'))
+    # path('admin/custom/', include('app.urls'))
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
 # urlpatterns +=static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
