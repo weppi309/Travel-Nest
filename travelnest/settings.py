@@ -105,12 +105,18 @@ WSGI_APPLICATION = 'travelnest.wsgi.application'
 
 DATABASES = {
     'default': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'railway',
+        # 'USER': 'root',
+        # 'PASSWORD': 'YHSGYkCQnVmkMxhETGoFxmuwRFXjOyMe',
+        # 'HOST': 'roundhouse.proxy.rlwy.net',
+        # 'PORT': '23145',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'YHSGYkCQnVmkMxhETGoFxmuwRFXjOyMe',
-        'HOST': 'roundhouse.proxy.rlwy.net',
-        'PORT': '23145',
+        'NAME': os.getenv('MYSQLDATABASE'),
+        'USER': os.getenv('MYSQLUSER'),
+        'PASSWORD': os.getenv('MYSQLPASSWORD'),
+        'HOST': os.getenv('MYSQLHOST'),
+        'PORT': os.getenv('MYSQLPORT'),
     }
 }
 
