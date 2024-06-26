@@ -1,5 +1,6 @@
 [build]
 install = [
   "libmariadb-dev",
-  "pkg-config"
+  "pkg-config",
+  "default-libmysqlclient-dev"
 ]
