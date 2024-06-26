@@ -1,0 +1,5 @@
+[build]
+install = [
+  "libmariadb-dev",
+  "pkg-config"
+]
