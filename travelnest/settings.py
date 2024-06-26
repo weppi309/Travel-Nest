@@ -105,7 +105,11 @@ WSGI_APPLICATION = 'travelnest.wsgi.application'
 
 import pymysql
 pymysql.install_as_MySQLdb()
+import environ
 
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.mysql',
@@ -115,11 +119,11 @@ DATABASES = {
         # 'HOST': 'roundhouse.proxy.rlwy.net',
         # 'PORT': '23145',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQLDATABASE'),
-        'USER': os.getenv('MYSQLUSER'),
-        'PASSWORD': os.getenv('MYSQLPASSWORD'),
-        'HOST': os.getenv('MYSQLHOST'),
-        'PORT': os.getenv('MYSQLPORT'),
+        'NAME': env('MYSQLDATABASE'),
+        'USER': env('MYSQLUSER'),
+        'PASSWORD': env('MYSQLPASSWORD'),
+        'HOST': env('MYSQLHOST'),
+        'PORT': env('MYSQLPORT'),
     }
 }
 

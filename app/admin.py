@@ -30,7 +30,7 @@ class KhachSanInline(admin.TabularInline):
     extra = 1
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'date_joined', 'phone_number', 'address', 'custom_method')
-    inlines = [KhachSanInline]
+    # inlines = [KhachSanInline]
     def get_inlines(self, request, obj=None):
         if request.user.role != 'admin':
             return [KhachSanInline]
@@ -41,7 +41,7 @@ class UserAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.role == 'provider':
+        if request.user.role in ['user', 'provider']:
             return qs.filter(id=request.user.id)
         return qs
 
