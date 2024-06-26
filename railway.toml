@@ -1,6 +1,4 @@
 [build]
 install = [
-  "libmariadb-dev",
-  "pkg-config",
-  "default-libmysqlclient-dev"
+  "bash install_dependencies.sh"
 ]
