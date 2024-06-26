@@ -31,7 +31,10 @@ class KhachSanInline(admin.TabularInline):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'date_joined', 'phone_number', 'address', 'custom_method')
     inlines = [KhachSanInline]
-
+    def get_inlines(self, request, obj=None):
+        if request.user.role != 'admin':
+            return [KhachSanInline]
+        return super().get_inlines(request, obj)
     def custom_method(self, obj):
         return ', '.join([str(group) for group in obj.groups.all()])
     custom_method.short_description = 'Groups'
@@ -378,8 +381,8 @@ admin_site.register(LoaiTienNghi,LoaiTienNghiAdmin)
 admin_site.register(DichVu,DichVuAdmin)
 admin_site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)
-admin_site.register(Danhgia,DanhGiaAdmin)
-admin_site.register(KhuyenMai,KhuyenMaiAdmin)
+admin.site.register(Danhgia,DanhGiaAdmin)
+admin.site.register(KhuyenMai,KhuyenMaiAdmin)
 
 # from django.db.models import Count
 # from django.shortcuts import render
