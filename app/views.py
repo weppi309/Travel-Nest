@@ -68,14 +68,34 @@ def home(request):
 
     context={'tinh_data': tinh_data, 'tinhs':tinhs,'top_2_tinhs':top_2_tinhs,'top_3_tinhs':top_3_tinhs} 
     return render(request,'app/home.html',context)
+# def search(request):
+#     if request.method=="POST":
+#         search= request.POST.get('tinh')
+#         tinh= Tinh.objects.filter(tentinh=search).first() # ten tinh
+#         if search !='':
+#             khachsans= KhachSan.objects.filter(tinh_id=tinh)
+#         else:
+#             khachsans=KhachSan.objects.all()
+#     context={'khachsans':khachsans,'search':search,'tinh':tinh,'search':search}
+#     return render(request,'app/search.html',context)
+# def ds(request): #view danh sách khách sạn theo tỉnh
+#     tinh_id = request.GET.get('tinh_id')
+#     tinh_name = request.GET.get('tinh_name')
+#    # Kiểm tra xem có tinh_id nào được truyền không
+#     if tinh_id is not None:
+#         khachsans = KhachSan.objects.filter(tinh_id=tinh_id)
+#     else:
+#         khachsans = KhachSan.objects.all()
+#     context={'khachsans':khachsans, 'tinh_id':tinh_id,'tinh_name':tinh_name}
+#     return render(request,'app/listkhachsan.html',context)
 def search(request):
     if request.method=="POST":
         search= request.POST.get('tinh')
         tinh= Tinh.objects.filter(tentinh=search).first() # ten tinh
         if search !='':
-            khachsans= KhachSan.objects.filter(tinh_id=tinh)
+            khachsans= KhachSan.objects.filter(tinh_id=tinh, active=True)
         else:
-            khachsans=KhachSan.objects.all()
+            khachsans=KhachSan.objects.filter(active=True)
     context={'khachsans':khachsans,'search':search,'tinh':tinh,'search':search}
     return render(request,'app/search.html',context)
 def ds(request): #view danh sách khách sạn theo tỉnh
@@ -83,15 +103,16 @@ def ds(request): #view danh sách khách sạn theo tỉnh
     tinh_name = request.GET.get('tinh_name')
    # Kiểm tra xem có tinh_id nào được truyền không
     if tinh_id is not None:
-        khachsans = KhachSan.objects.filter(tinh_id=tinh_id)
+        khachsans = KhachSan.objects.filter(tinh_id=tinh_id, active=True)
     else:
-        khachsans = KhachSan.objects.all()
+        khachsans = KhachSan.objects.filter(active=True)
     context={'khachsans':khachsans, 'tinh_id':tinh_id,'tinh_name':tinh_name}
     return render(request,'app/listkhachsan.html',context)
 def ks(request):
     khachsan_id = request.GET.get('khachsan_id')
     khachsan = KhachSan.objects.get(pk=khachsan_id)
     listanhks =AnhKhachSan.objects.filter(khachsan=khachsan)
+    listdichvu = DichVu.objects.filter(khachsan=khachsan)
     khachsan_name = khachsan.tenkhachsan
     listphong = Phong.objects.filter(khachsan=khachsan)
     for phong in listphong:
@@ -108,6 +129,10 @@ def ks(request):
     price_per_room = first_room.giaphong
     tinh_name = khachsan.tinh.tentinh
     tinh_id = khachsan.tinh.id
+    danhgias= Danhgia.objects.filter(hoadon__chitiethoadon__phong__khachsan__id=khachsan_id)
+    diemtb_danhgia = khachsan.diem_trung_binh    
+    tendiem_tb= khachsan.get_danh_gia_tb
+    tong_danhgia=khachsan.sum_danh_gia
     # lay_ngay_nhan = request.GET.get('ngay_nhan')
     # lay_ngay_tra = request.GET.get('ngay_tra')
     # check_in=''
@@ -133,7 +158,7 @@ def ks(request):
     # 'danhgias':danhgias,
     # 'tong_danhgia':tong_danhgia,
     # 'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'check_in':check_in,'check_out':check_out,'anhs':anhs,'phongs': phongs,'phong_trong':phong_trong, ,'tinh_name':tinh_name,'tinh_id':tinh_id
-    context={'range': range,'numberOfRoomsFromServer': number_of_rooms, 'pricePerRoomFromServer': price_per_room,'khachsan':khachsan,'khachsan_id':khachsan_id, 'khachsan_name':khachsan_name,'listanhks':listanhks,'listphong':listphong,'tinh_name':tinh_name,'tinh_id':tinh_id}
+    context={'listdichvu':listdichvu,'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'tong_danhgia':tong_danhgia,'danhgias':danhgias,'range': range,'numberOfRoomsFromServer': number_of_rooms, 'pricePerRoomFromServer': price_per_room,'khachsan':khachsan,'khachsan_id':khachsan_id, 'khachsan_name':khachsan_name,'listanhks':listanhks,'listphong':listphong,'tinh_name':tinh_name,'tinh_id':tinh_id}
     return render(request, 'app/khachsan.html', context)
 def dondatphong(request):
     if request.user.is_authenticated:

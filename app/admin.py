@@ -220,12 +220,10 @@ class AnhPhongAdmin(admin.ModelAdmin):
     list_display=('id','anhphong','phong','created_date','active')
 class AnhKhachSanAdmin(admin.ModelAdmin):
     list_display=('id','anhks','khachsan','created_date','active')
-class LoaiTienNghiAdmin(admin.ModelAdmin):
-    list_display=('id','tenloai','created_date','active')
 class TienNghiAdmin(admin.ModelAdmin):
-    list_display=('id','tentiennghi','loai_tiennghi','created_date','active')
+    list_display=('id','tentiennghi','created_date','active')
     list_display_links = list_display
-    list_filter = ('active', 'loai_tiennghi')
+    list_filter = ('active',)
     search_fields = ('tentiennghi',)
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -410,7 +408,6 @@ admin_site.register(Phong,PhongAdmin)
 admin_site.register(AnhPhong,AnhPhongAdmin)
 admin_site.register(AnhKhachSan,AnhKhachSanAdmin)
 admin_site.register(TienNghi,TienNghiAdmin)
-admin_site.register(LoaiTienNghi,LoaiTienNghiAdmin)
 admin_site.register(DichVu,DichVuAdmin)
 admin_site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)

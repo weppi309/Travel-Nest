@@ -19,7 +19,7 @@
                 {% comment %} <li>Tổng tiền: {{ chitiethoadon.total_tien|floatformat:2|intcomma}}</li>   {% endcomment %}
             </ul>
             <div class="d-flex justify-content-left">
-                <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}">
+                <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
                     Đánh giá
                 </button>
                 
@@ -37,6 +37,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="hoadon_id" id="hoadon_id">
                     <input type="hidden" name="phong_id">
                     <div>
                         <h3>Mức điểm:</h3>
@@ -86,4 +87,15 @@
 
 </div> 
 <br></br></br></br></br></br></br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var danhgiaButtons = document.querySelectorAll('.danhgia');
+        danhgiaButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var hoadonId = this.getAttribute('data-hoadon-id');
+                document.getElementById('hoadon_id').value = hoadonId;
+            });
+        });
+    });
+</script>
 {% endblock content %}
