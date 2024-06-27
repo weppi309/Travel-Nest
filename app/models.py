@@ -56,7 +56,32 @@ class KhachSan(ModelBase):
     owner = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True,null=True)
     def __str__(self):
         return self.tenkhachsan
-
+    @property
+    def diem_trung_binh(self):
+        danhgia_list = Danhgia.objects.filter(hoadon__chitiethoadon__phong__khachsan=self)
+        # Tính tổng điểm từ tất cả các đánh giá
+        tong_diem = sum([danhgia.diem for danhgia in danhgia_list])
+        # Đếm số lượng đánh giá
+        so_luong_danh_gia = danhgia_list.count()
+        # Tính điểm trung bình hoặc đặt điểm mặc định là 10 nếu chưa có đánh giá
+        diem_trung_binh = (tong_diem / so_luong_danh_gia) if so_luong_danh_gia > 0 else 10
+        diem_tb= int(diem_trung_binh)
+        return diem_tb
+    @property
+    def get_danh_gia_tb(self):
+        if 9 <= self.diem_trung_binh<= 10:
+            return "Tuyệt vời"
+        elif 7 <= self.diem_trung_binh < 9:
+            return "Tốt"
+        elif 5 <= self.diem_trung_binh < 7:
+            return "Bình thường"
+        elif self.diem_trung_binh < 5:
+            return "Tệ"
+    @property
+    def sum_danh_gia(self):
+         danhgia_list = Danhgia.objects.filter(hoadon__chitiethoadon__phong__khachsan=self)
+         so_luong_danh_gia = danhgia_list.count()
+         return so_luong_danh_gia
 class Phong(ModelBase):
     tenphong = models.CharField(max_length=200,null=True)
     dientich = models.CharField(max_length=200,null=True)
@@ -77,15 +102,11 @@ class AnhKhachSan(ModelBase):
     khachsan = models.ForeignKey(KhachSan,on_delete=models.SET_NULL,blank=True,null=True)
 
 class TienNghi(ModelBase):
-    khachsan = models.ForeignKey(KhachSan, on_delete=models.CASCADE,blank=True,null=True)
     icon = models.ImageField(upload_to='icon/%Y/%m',null=True,blank=True)
     tentiennghi = models.CharField(max_length=200,null=True)
     mota_tiennghi = models.TextField(blank=True,null=True)
-    loai_tiennghi = models.ForeignKey('LoaiTienNghi',on_delete=models.SET_NULL,blank=True,null=True)
     def __str__(self):
         return self.tentiennghi
-class LoaiTienNghi(ModelBase):
-    tenloai = models.CharField(max_length=200,null=True)
 class DichVu(ModelBase):
     tendichvu= models.CharField(max_length=200,null=True)
     mota_dichvu= models.TextField(blank=True,null=True)
@@ -109,6 +130,19 @@ class Danhgia(ModelBase):
     hoadon = models.OneToOneField(HoaDon,on_delete=models.CASCADE,blank=True,null=True)
     diem = models.IntegerField()
     binhluan = models.CharField(max_length=200,null=True)
+    
+    @property
+    def get_danh_gia(self):
+        if 9 <= self.diem <= 10:
+            return "Xuất sắc"
+        elif 7 <= self.diem < 9:
+            return "Tốt"
+        elif 5 <= self.diem < 7:
+            return "Bình thường"
+        elif self.diem < 5:
+            return "Tệ"
+        else:
+            return "Chưa được đánh giá"
 
 class KhuyenMai(ModelBase):
     tenkhuyenmai= models.CharField(max_length=200,null=True)

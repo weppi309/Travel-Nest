@@ -148,10 +148,8 @@ class AnhPhongAdmin(admin.ModelAdmin):
     list_display=('id','anhphong','phong','created_date','active')
 class AnhKhachSanAdmin(admin.ModelAdmin):
     list_display=('id','anhks','khachsan','created_date','active')
-class LoaiTienNghiAdmin(admin.ModelAdmin):
-    list_display=('id','tenloai','created_date','active')
 class TienNghiAdmin(admin.ModelAdmin):
-    list_display=('id','tentiennghi','loai_tiennghi','created_date','active')
+    list_display=('id','tentiennghi','created_date','active')
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':
@@ -328,7 +326,6 @@ admin.site.register(Phong,PhongAdmin)
 admin.site.register(AnhPhong,AnhPhongAdmin)
 admin.site.register(AnhKhachSan,AnhKhachSanAdmin)
 admin.site.register(TienNghi,TienNghiAdmin)
-admin.site.register(LoaiTienNghi,LoaiTienNghiAdmin)
 admin.site.register(DichVu,DichVuAdmin)
 admin.site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)

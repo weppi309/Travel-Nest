@@ -91,10 +91,13 @@ def ds(request): #view danh sách khách sạn theo tỉnh
 def ks(request):
     khachsan_id = request.GET.get('khachsan_id')
     khachsan = KhachSan.objects.get(pk=khachsan_id)
+    listdichvu = DichVu.objects.filter(khachsan=khachsan)
     listanhks =AnhKhachSan.objects.filter(khachsan=khachsan)
     khachsan_name = khachsan.tenkhachsan
     listphong = Phong.objects.filter(khachsan=khachsan)
+    
     for phong in listphong:
+        #  listanhphong = AnhPhong.objects.get(phong=phong)
          number_of_rooms = phong.soluong
          phong.range_soluong = range(phong.soluong+1)
     # Lấy giá của mỗi phòng từ cơ sở dữ liệu
@@ -108,6 +111,14 @@ def ks(request):
     price_per_room = first_room.giaphong
     tinh_name = khachsan.tinh.tentinh
     tinh_id = khachsan.tinh.id
+
+
+    danhgias= Danhgia.objects.filter(hoadon__chitiethoadon__phong__khachsan__id=khachsan_id)
+    diemtb_danhgia = khachsan.diem_trung_binh    
+    tendiem_tb= khachsan.get_danh_gia_tb
+    tong_danhgia=khachsan.sum_danh_gia
+
+
     # lay_ngay_nhan = request.GET.get('ngay_nhan')
     # lay_ngay_tra = request.GET.get('ngay_tra')
     # check_in=''
@@ -127,13 +138,11 @@ def ks(request):
     #     anhs = AnhPhong.objects.filter(phong=phong)
     # danhgias= Danhgia.objects.filter(phong__khachsan=khachsan)
     # tiennghis = SapXepTN.objects.filter(phong=phongs.first())
-    # diemtb_danhgia = khachsan.diem_trung_binh    
-    # tendiem_tb= khachsan.get_danh_gia_tb
-    # tong_danhgia=khachsan.sum_danh_gia
+
     # 'danhgias':danhgias,
-    # 'tong_danhgia':tong_danhgia,
-    # 'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'check_in':check_in,'check_out':check_out,'anhs':anhs,'phongs': phongs,'phong_trong':phong_trong, ,'tinh_name':tinh_name,'tinh_id':tinh_id
-    context={'range': range,'numberOfRoomsFromServer': number_of_rooms, 'pricePerRoomFromServer': price_per_room,'khachsan':khachsan,'khachsan_id':khachsan_id, 'khachsan_name':khachsan_name,'listanhks':listanhks,'listphong':listphong,'tinh_name':tinh_name,'tinh_id':tinh_id}
+    # 
+    # 'check_in':check_in,'check_out':check_out,'anhs':anhs,'phongs': phongs,'phong_trong':phong_trong, ,'tinh_name':tinh_name,'tinh_id':tinh_id
+    context={'listdichvu':listdichvu,'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'tong_danhgia':tong_danhgia,'danhgias':danhgias,'range': range,'numberOfRoomsFromServer': number_of_rooms, 'pricePerRoomFromServer': price_per_room,'khachsan':khachsan,'khachsan_id':khachsan_id, 'khachsan_name':khachsan_name,'listanhks':listanhks,'listphong':listphong,'tinh_name':tinh_name,'tinh_id':tinh_id}
     return render(request, 'app/khachsan.html', context)
 def dondatphong(request):
     if request.user.is_authenticated:
@@ -142,9 +151,15 @@ def dondatphong(request):
         if request.method == 'POST':
             diem = request.POST.get("exampleRadios")
             binhluan = request.POST.get("binhluan")
-            phong_id = request.POST.get("phong_id")  # Lấy phong_id từ biểu mẫu đánh giá
-            # hoadon = HoaDon.objects.get(chitiethoadon__phong_id=phong_id, user=customer)  # Lấy hóa đơn dựa trên phong_id
-            # danhgia = Danhgia.objects.create(user=customer, phong=hoadon.chitiethoadon_set.get(phong_id=phong_id).phong, diem=diem, binhluan=binhluan)
+            hoadon_id = request.POST.get("hoadon_id")
+            hoadon = HoaDon.objects.get(id=hoadon_id)
+            print("Hóa đơn ID:", hoadon_id)
+            # Tạo đối tượng đánh giá mới và lưu vào cơ sở dữ liệu
+            Danhgia.objects.create(
+                hoadon=hoadon,
+                diem=diem,
+                binhluan=binhluan
+            )
             return redirect('dondatphong')  # Chuyển hướng trở lại trang danh sách hóa đơn sau khi đánh giá
     else:
         hoadon =[]
