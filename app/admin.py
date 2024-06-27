@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.utils.html import mark_safe
 from app.views import current_promotions_view, hotel_by_tinh_view, hotel_rating_view, invoice_by_month_view, revenue_by_month_view, room_by_hotel_view, user_role_stats_view
 from .models import *
 # from django.urls import reverse
@@ -31,6 +31,15 @@ class KhachSanInline(admin.TabularInline):
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'date_joined', 'phone_number', 'address', 'custom_method')
     # inlines = [KhachSanInline]
+    list_display_links = list_display
+    list_filter = ('is_active', 'date_joined')
+    search_fields = ('first_name', 'username', 'last_name', 'email', 'phone_number')
+    readonly_fields = ['image_view']
+
+    def image_view(self, user):
+        return mark_safe(
+            "<img src='/static/{url}' alt='test' width='120' />".format(url=user.avatar.name)
+        )
     def get_inlines(self, request, obj=None):
         if request.user.role != 'admin':
             return [KhachSanInline]
@@ -103,6 +112,9 @@ class AnhPhongInline(admin.TabularInline):
 class PhongAdmin(admin.ModelAdmin):
     list_display=('id','tenphong','khachsan','created_date','active')
     inlines = [AnhPhongInline]
+    list_display_links = list_display
+    list_filter = ('khachsan', 'active')
+    search_fields = ('tenphong',)
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':
@@ -130,8 +142,11 @@ class AnhKhachSanInline(admin.TabularInline):
 class PhongInline(admin.TabularInline):
     model = Phong
 class KhachSanAdmin(admin.ModelAdmin):
-    list_display=('id','tenkhachsan','sdt','email_ks','created_date','active')
+    list_display=('id','tenkhachsan','sdt','email_ks','owner','created_date','active')
     inlines = [AnhKhachSanInline, PhongInline]
+    list_display_links = list_display
+    list_filter = ('created_date', 'owner', 'active')
+    search_fields = ('tenkhachsan',)
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':
@@ -188,11 +203,19 @@ class KhachSanAdmin(admin.ModelAdmin):
     #     return form
 class TinhAdmin(admin.ModelAdmin):
     list_display=('id','tentinh','created_date','active')
+    list_display_links = list_display
+    list_filter = ('active',)
+    search_fields = ('tentinh',)
 class HuyenAdmin(admin.ModelAdmin):
     list_display=('id','tenhuyen','tinh','created_date','active')
+    list_display_links = list_display
+    list_filter = ('tinh', 'active')
+    search_fields = ('tenhuyen',)
 class XaAdmin(admin.ModelAdmin):
     list_display=('id','tenXa','huyen','created_date','active')
-    
+    list_display_links = list_display
+    list_filter = ('huyen', 'active')
+    search_fields = ('tenXa',)
 class AnhPhongAdmin(admin.ModelAdmin):
     list_display=('id','anhphong','phong','created_date','active')
 class AnhKhachSanAdmin(admin.ModelAdmin):
@@ -201,6 +224,9 @@ class LoaiTienNghiAdmin(admin.ModelAdmin):
     list_display=('id','tenloai','created_date','active')
 class TienNghiAdmin(admin.ModelAdmin):
     list_display=('id','tentiennghi','loai_tiennghi','created_date','active')
+    list_display_links = list_display
+    list_filter = ('active', 'loai_tiennghi')
+    search_fields = ('tentiennghi',)
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':
@@ -222,7 +248,10 @@ class TienNghiAdmin(admin.ModelAdmin):
             return True
         return super().has_add_permission(request)
 class DichVuAdmin(admin.ModelAdmin):
-    list_display=('id','tendichvu','gia_dichvu','created_date','active') 
+    list_display=('id','tendichvu','gia_dichvu','created_date','active')
+    list_display_links = list_display
+    list_filter = ('active', 'gia_dichvu')
+    search_fields = ('tendichvu',)
 class ChiTietHoaDonInline(admin.TabularInline):
     model = ChiTietHoaDon
     extra = 1
@@ -285,9 +314,11 @@ class ChiTietHoaDonInline(admin.TabularInline):
 #             kwargs['queryset'] = Phong.objects.filter(owner=request.user.hoadon_set.first().user)
 #         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 class HoaDonAdmin(admin.ModelAdmin):
-    list_display=('id','user','created_date','active')
+    list_display=('id','user', 'trangthai', 'thanh_toan','created_date','active')
     inlines = [ChiTietHoaDonInline]
-    
+    list_display_links = list_display
+    list_filter = ('user', 'trangthai', 'active')
+    search_fields = ('user__username',)
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':
@@ -324,7 +355,9 @@ class HoaDonAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 class ChiTietHoaDonAdmin(admin.ModelAdmin):
     list_display=('id','hoadon','phong','created_date','active')
-
+    list_display_links = list_display
+    list_filter = ('hoadon', 'phong', 'active')
+    search_fields = ('hoadon__id', 'phong__tenphong')
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.role == 'provider':

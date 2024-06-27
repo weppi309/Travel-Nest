@@ -15,6 +15,9 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatar/%Y/%m', null=True, blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
 
+    class Meta:
+        verbose_name_plural = 'Quản lý người dùng'
+
     def __str__(self):
         return self.username
     
@@ -30,17 +33,22 @@ class ModelBase(models.Model):
 class Tinh(ModelBase):
     tentinh = models.CharField(max_length=200,null=True)
     anhtinh = models.ImageField(upload_to='tinh/%Y/%m',null=True,blank=True)
+    class Meta:
+        verbose_name_plural = 'Quản lý tỉnh thành'
     def __str__(self):
         return self.tentinh
 class Huyen(ModelBase):
     tenhuyen= models.CharField(max_length=200,null=True)
     tinh = models.ForeignKey(Tinh,on_delete=models.SET_NULL,blank=True,null=True)
-   
+    class Meta:
+        verbose_name_plural = 'Quản lý quận huyện'
     def __str__(self):
         return self.tenhuyen
 class Xa(ModelBase):
     tenXa = models.CharField(max_length=200,null=True)
     huyen = models.ForeignKey(Huyen,on_delete=models.SET_NULL,blank=True,null=True)
+    class Meta:
+        verbose_name_plural = 'Quản lý xã phường'
     def __str__(self):
         return self.tenXa
 
@@ -54,6 +62,8 @@ class KhachSan(ModelBase):
     email_ks = models.CharField(max_length=200,null=True)    
     dichvu = models.ManyToManyField('DichVu',blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True,null=True)
+    class Meta:
+        verbose_name_plural = 'Quản lý khách sạn'
     def __str__(self):
         return self.tenkhachsan
 
@@ -66,30 +76,40 @@ class Phong(ModelBase):
     soluong= models.IntegerField()
     khachsan = models.ForeignKey(KhachSan,on_delete=models.SET_NULL,blank=True,null=True)
     tiennghi = models.ManyToManyField('TienNghi',blank=True)
-    
-
+    class Meta:
+        verbose_name_plural = 'Quản lý phòng'
+    def __str__(self):
+        return self.tenphong
 class AnhPhong(ModelBase):
     anhphong = models.ImageField(upload_to='anhphong/%Y/%m',null=True,blank=True)
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True )
-
+    class Meta:
+        verbose_name_plural = 'Quản lý ảnh phòng'
 class AnhKhachSan(ModelBase):
     anhks = models.ImageField(upload_to='anhks/%Y/%m',null=True,blank=True)
     khachsan = models.ForeignKey(KhachSan,on_delete=models.SET_NULL,blank=True,null=True)
-
+    class Meta:
+        verbose_name_plural = 'Quản lý ảnh khách sạn'
 class TienNghi(ModelBase):
     khachsan = models.ForeignKey(KhachSan, on_delete=models.CASCADE,blank=True,null=True)
     icon = models.ImageField(upload_to='icon/%Y/%m',null=True,blank=True)
     tentiennghi = models.CharField(max_length=200,null=True)
     mota_tiennghi = models.TextField(blank=True,null=True)
     loai_tiennghi = models.ForeignKey('LoaiTienNghi',on_delete=models.SET_NULL,blank=True,null=True)
+    class Meta:
+        verbose_name_plural = 'Quản lý tiện nghi'
     def __str__(self):
         return self.tentiennghi
 class LoaiTienNghi(ModelBase):
     tenloai = models.CharField(max_length=200,null=True)
+    class Meta:
+        verbose_name_plural = 'Quản lý loại tiện nghi'
 class DichVu(ModelBase):
     tendichvu= models.CharField(max_length=200,null=True)
     mota_dichvu= models.TextField(blank=True,null=True)
     gia_dichvu = models.FloatField()
+    class Meta:
+        verbose_name_plural = 'Quản lý dịch vụ'
     def __str__(self):
         return self.tendichvu
     
@@ -111,7 +131,8 @@ class HoaDon(ModelBase):
         choices=TRANGTHAI_CHOICES,
         default=CHUA_THANH_TOAN,
     )
-
+    class Meta:
+        verbose_name_plural = 'Quản lý hóa đơn'
 class ChiTietHoaDon(ModelBase):
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True)
     hoadon = models.ForeignKey(HoaDon,on_delete=models.SET_NULL,blank=True,null=True)
@@ -119,18 +140,22 @@ class ChiTietHoaDon(ModelBase):
     ngay_gio_tra = models.DateTimeField()
     soluong = models.IntegerField()
     dongia = models.FloatField()
+    class Meta:
+        verbose_name_plural = 'Quản lý chi tiết hóa đơn'
 class Danhgia(ModelBase):
     hoadon = models.OneToOneField(HoaDon,on_delete=models.CASCADE,blank=True,null=True)
     diem = models.IntegerField()
     binhluan = models.CharField(max_length=200,null=True)
-
+    class Meta:
+        verbose_name_plural = 'Quản lý đánh giá'
 class KhuyenMai(ModelBase):
     tenkhuyenmai= models.CharField(max_length=200,null=True)
     thoigian_bd = models.DateTimeField()
     thoigian_kt = models.DateTimeField()
     giatri_km = models.FloatField()
     phong = models.ManyToManyField(Phong, blank=True)
-
+    class Meta:
+        verbose_name_plural = 'Quản lý khuyến mãi'
 class Payment_VNPay(models.Model):
     order_id = models.BigIntegerField(default=0, null=True, blank=True)
     amount = models.FloatField(default=0.0, null=True, blank=True)
