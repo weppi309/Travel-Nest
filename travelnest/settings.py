@@ -196,7 +196,7 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
-    "hide_models": ["app.anhkhachsan","app.anhphong"],
+    "hide_models": [],
     "order_with_respect_to": ["app", "app", "app.user"],
     "custom_links": {
         "app": [
