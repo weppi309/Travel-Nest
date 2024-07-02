@@ -81,6 +81,8 @@
                     </div>
                     <a><strong>Tổng thời gian lưu trú:</strong></a></br>
                     <h6>{{so_dem}} đêm</h6>
+                    <a><strong>Số lượng phòng:</strong></a></br>
+                    <h6>{{slphong}} phòng</h6>
                 </div>
                 <div class='boxtt top' >
                     <h4>
@@ -135,7 +137,7 @@
             <div class='col-md-8'>
                 <div class='boxtt top'>
                     <h3><strong>{{user.username}}</strong></h4>
-                    <a>Đã đăng nhập bằng google</a>
+                    {% comment %} <a>Đã đăng nhập bằng google</a> {% endcomment %}
                 </div>
                 <div class='boxtt top'>
                     <h4>Nhập thông tin chi tiết của bạn</h4>
@@ -261,6 +263,7 @@
                 <div class="modal-footer">
                     <form method="post" action="">
                         {% csrf_token %}
+                        <input type="hidden" name="slphong" value="{{ slphong }}">
                         <input type="hidden" name="ngay_nhan" value="{{ngay_gio_nhan }}">
                         <input type="hidden" name="ngay_tra" value="{{ ngay_gio_tra }}">
                         <input type="hidden" name="so_luong_dem" value="{{ so_dem }}">

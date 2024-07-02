@@ -114,17 +114,14 @@ def ks(request):
     listanhks =AnhKhachSan.objects.filter(khachsan=khachsan)
     listdichvu = DichVu.objects.filter(khachsan=khachsan)
     khachsan_name = khachsan.tenkhachsan
-    listphong = Phong.objects.filter(khachsan=khachsan)
+    listphong = Phong.objects.filter(khachsan=khachsan, active=True)
     for phong in listphong:
          number_of_rooms = phong.soluong
          phong.range_soluong = range(phong.soluong+1)
-    # Lấy giá của mỗi phòng từ cơ sở dữ liệu
-    # Đây là một ví dụ đơn giản, bạn có thể thay đổi truy vấn để lấy giá cụ thể của mỗi phòng
+    
     first_room = Phong.objects.first()
     price_per_room = first_room.giaphong if first_room else 0
-
-    # Lấy giá của mỗi phòng từ cơ sở dữ liệu
-    # Đây là một ví dụ đơn giản, bạn có thể thay đổi truy vấn để lấy giá cụ thể của mỗi phòng
+    
     first_room = Phong.objects.first()
     price_per_room = first_room.giaphong
     tinh_name = khachsan.tinh.tentinh
@@ -133,31 +130,6 @@ def ks(request):
     diemtb_danhgia = khachsan.diem_trung_binh    
     tendiem_tb= khachsan.get_danh_gia_tb
     tong_danhgia=khachsan.sum_danh_gia
-    # lay_ngay_nhan = request.GET.get('ngay_nhan')
-    # lay_ngay_tra = request.GET.get('ngay_tra')
-    # check_in=''
-    # check_out=''
-    # if request.method=="POST":
-    #     check_in= request.POST.get('check-in')
-    #     check_out=request.POST.get('check-out')
-    # # Kiểm tra và chuyển đổi ngày
-    # phong_trong =[]
-    # phongs = Phong.objects.filter(khachsan=khachsan_id)
-    # if lay_ngay_nhan and lay_ngay_tra:
-    #     # Chuyển đổi giá trị ngày từ chuỗi sang đối tượng datetime
-    #     ngaynhan = datetime.fromisoformat(lay_ngay_nhan).date()
-    #     ngaytra = datetime.fromisoformat(lay_ngay_tra).date()
-    #     phong_trong = [phong for phong in phongs if phong.is_phong_trong_hien_tai(ngaynhan,ngaytra) is True]
-    # for phong in phongs:
-    #     anhs = AnhPhong.objects.filter(phong=phong)
-    # danhgias= Danhgia.objects.filter(phong__khachsan=khachsan)
-    # tiennghis = SapXepTN.objects.filter(phong=phongs.first())
-    # diemtb_danhgia = khachsan.diem_trung_binh    
-    # tendiem_tb= khachsan.get_danh_gia_tb
-    # tong_danhgia=khachsan.sum_danh_gia
-    # 'danhgias':danhgias,
-    # 'tong_danhgia':tong_danhgia,
-    # 'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'check_in':check_in,'check_out':check_out,'anhs':anhs,'phongs': phongs,'phong_trong':phong_trong, ,'tinh_name':tinh_name,'tinh_id':tinh_id
     context={'listdichvu':listdichvu,'tendiem_tb':tendiem_tb,'diemtb_danhgia':diemtb_danhgia,'tong_danhgia':tong_danhgia,'danhgias':danhgias,'range': range,'numberOfRoomsFromServer': number_of_rooms, 'pricePerRoomFromServer': price_per_room,'khachsan':khachsan,'khachsan_id':khachsan_id, 'khachsan_name':khachsan_name,'listanhks':listanhks,'listphong':listphong,'tinh_name':tinh_name,'tinh_id':tinh_id}
     return render(request, 'app/khachsan.html', context)
 def dondatphong(request):
@@ -178,43 +150,73 @@ def dondatphong(request):
     return render(request,'app/dondatphong.html', context)
 
 
-@login_required(login_url='dangnhap')
+@login_required
 def datphong(request):
-    if request.user.is_authenticated:
-        if request.method == 'GET':
-            slphong = request.GET.get("quantity")
-            ngay_gio_nhan = request.GET.get("ngay_nhan")
-            ngay_gio_tra = request.GET.get("ngay_tra")
-            phong_id = request.GET.get("phong_id")
-            phong = Phong.objects.get(id= phong_id)
-            ten_ks= phong.khachsan.tenkhachsan
-            ten_tinh= phong.khachsan.tinh.tentinh
-            tenphong = phong.tenphong
-            dongia=phong.giaphong
-            anh_phong = AnhPhong.objects.filter(phong=phong)
-            ngay_gio_nhan_str = datetime.strptime(ngay_gio_nhan, "%Y-%m-%dT%H:%M")
-            ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
-            so_dem= (ngay_gio_tra_str-ngay_gio_nhan_str).days
-            total=so_dem*dongia
-            context={'phong_id':phong_id,'ten_tinh':ten_tinh,'ngay_gio_nhan':ngay_gio_nhan,'ngay_gio_tra': ngay_gio_tra,'ten_ks': ten_ks,'anh_phong':anh_phong,'slphong':slphong,'so_dem':so_dem,'total':total,'tenphong':tenphong,'dongia':dongia}
-            return render(request,'app/datphong.html',context)
-        elif request.method=='POST':
-            ngay_nhan = request.POST.get("ngay_nhan")
-            ngay_tra = request.POST.get("ngay_tra")
-            so_luong_dem = request.POST.get("so_luong_dem")
-            phong_id = request.POST.get("phong_id")
-            # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
+    if request.method == 'GET':
+        slphong = request.GET.get("quantity")
+        quantity_float = float(slphong)
+        ngay_gio_nhan = request.GET.get("ngay_nhan")
+        ngay_gio_tra = request.GET.get("ngay_tra")
+        phong_id = request.GET.get("phong_id")
+        phong = Phong.objects.get(id=phong_id)
+        ten_ks = phong.khachsan.tenkhachsan
+        ten_tinh = phong.khachsan.tinh.tentinh
+        tenphong = phong.tenphong
+        dongia = phong.giaphong
+        anh_phong = AnhPhong.objects.filter(phong=phong)
+        ngay_gio_nhan_str = datetime.strptime(ngay_gio_nhan, "%Y-%m-%dT%H:%M")
+        ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
+        so_dem = (ngay_gio_tra_str - ngay_gio_nhan_str).days
+        total = so_dem * dongia * quantity_float
+        context = {
+            'phong_id': phong_id,
+            'ten_tinh': ten_tinh,
+            'ngay_gio_nhan': ngay_gio_nhan,
+            'ngay_gio_tra': ngay_gio_tra,
+            'ten_ks': ten_ks,
+            'anh_phong': anh_phong,
+            'slphong': slphong,
+            'so_dem': so_dem,
+            'total': total,
+            'tenphong': tenphong,
+            'dongia': dongia,
+        }
+        return render(request, 'app/datphong.html', context)
+    
+    elif request.method == 'POST':
+        ngay_nhan = request.POST.get("ngay_nhan")
+        ngay_tra = request.POST.get("ngay_tra")
+        so_luong_dem = request.POST.get("so_luong_dem")
+        phong_id = request.POST.get("phong_id")
+        slphong = request.POST.get("slphong")
+        
+        if slphong:
+            slphong = int(slphong)
+        
+        if slphong is not None:
             phong = Phong.objects.get(id=phong_id)
             don_gia = phong.giaphong
             customer = request.user
-            hoadon = HoaDon.objects.create(user=customer)
-            chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong=so_luong_dem,dongia=don_gia)
-            return redirect('dondatphong')
-            # Lưu thay đổi vào cơ sở dữ liệu  
-    else:
-        chitiethoadon=[]
-        hoadon ={''}
-
+            
+            if phong.soluong >= slphong:
+                phong.soluong -= slphong
+                if phong.soluong == 0:
+                    phong.active = False
+                phong.save()
+                
+                hoadon = HoaDon.objects.create(user=customer)
+                ChiTietHoaDon.objects.create(
+                    phong=phong,
+                    hoadon=hoadon,
+                    ngay_gio_nhan=ngay_nhan,
+                    ngay_gio_tra=ngay_tra,
+                    soluong=slphong,
+                    dongia=don_gia
+                )
+                
+        return redirect('dondatphong')
+    
+    return render(request, 'app/datphong.html')
 
 def index(request):
     # Xác định ngày hiện tại
