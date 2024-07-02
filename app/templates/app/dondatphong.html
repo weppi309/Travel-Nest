@@ -16,7 +16,7 @@
                 <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
                 <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
                 <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
-                {% comment %} <li>Tổng tiền: {{ chitiethoadon.total_tien|floatformat:2|intcomma}}</li>   {% endcomment %}
+                {% comment %} <li>Tổng tiền: {{ chitiethoadon.total|floatformat:2|intcomma}}</li>   {% endcomment %}
             </ul>
             <div class="d-flex justify-content-left">
                 <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
