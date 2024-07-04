@@ -155,6 +155,8 @@ class HoaDon(ModelBase):
         choices=TRANGTHAI_CHOICES,
         default=CHUA_THANH_TOAN,
     )
+    def __str__(self):
+        return f"Hóa đơn {self.id} - {'Đã thanh toán' if self.payment_status else 'Chưa thanh toán'}"
     class Meta:
         verbose_name_plural = 'Quản lý hóa đơn'
     def huy_don_hang(self):
@@ -166,8 +168,9 @@ class HoaDon(ModelBase):
             if chi_tiet.ngay_gio_nhan <= timezone.now() + timedelta(days=1):
                 raise forms.ValidationError("Không thể hủy đơn hàng vì đã quá thời gian nhận phòng.")
         
-        chi_tiet_hoa_don.delete()
-        self.delete()
+        chi_tiet_hoa_don.update(active=False)
+        self.active = False
+        self.save()
 class ChiTietHoaDon(ModelBase):
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True)
     hoadon = models.ForeignKey(HoaDon,on_delete=models.SET_NULL,blank=True,null=True)
@@ -176,6 +179,7 @@ class ChiTietHoaDon(ModelBase):
     soluong_phong = models.IntegerField()
     soluong_dem = models.IntegerField()
     dongia = models.FloatField()
+    tongtien = models.FloatField()
     class Meta:
         verbose_name_plural = 'Quản lý chi tiết hóa đơn'
 class Danhgia(ModelBase):

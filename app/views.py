@@ -114,6 +114,7 @@ def dondatphong(request):
         if request.method == 'POST':
             if 'huyphong' in request.POST:
                 hoadon_id = request.POST.get('hoadon_id')
+                
                 phong_id = request.POST.get('phong_id')
                 print(f"HoaDon ID: {hoadon_id}, Phong ID: {phong_id}")  # Log để kiểm tra giá trị nhận được
 
@@ -214,11 +215,12 @@ def datphong(request):
         so_luong_dem = request.POST.get("so_luong_dem")
         phong_id = request.POST.get("phong_id")
         payment_method = request.POST.get("payment_method")
-
+        
         slphong = request.POST.get("slphong")
         # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
         phong = Phong.objects.get(id=phong_id)
         don_gia = phong.giaphong
+        total = so_luong_dem * don_gia * slphong
         customer = request.user
         payment_status = True if payment_method == 'bank' else False
         if slphong:
@@ -231,12 +233,14 @@ def datphong(request):
             
             if phong.soluong >= slphong:
                 phong.soluong -= slphong
-                if phong.soluong == 0:
+                if phong.soluong > 0:
+                    phong.active = True
+                elif phong.soluong == 0:
                     phong.active = False
                 phong.save()
                 
                 hoadon = HoaDon.objects.create(user=customer,payment_method=payment_method, payment_status=payment_status)
-                chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong_dem=so_luong_dem,soluong_phong=slphong,dongia=don_gia)
+                chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong_dem=so_luong_dem,soluong_phong=slphong,dongia=don_gia,tongtien=total)
                 
         return redirect('dondatphong')
     
@@ -502,6 +506,7 @@ def payment_return(request):
         soluong_dem = request.COOKIES.get('soluong_dem')
         soluong_phong = request.COOKIES.get('soluong_phong')
         payment_method = request.COOKIES.get('payment_method')
+        giaphong = request.COOKIES.get('giaphong')
 
 
         # cutomer = request.user
@@ -512,27 +517,39 @@ def payment_return(request):
             vnp_TransactionNo = vnp_TransactionNo,
             vnp_ResponseCode = vnp_ResponseCode
         )
+        if soluong_phong:
+                soluong_phong = int(soluong_phong)
+        if soluong_phong is not None:
+            phong = Phong.objects.get(id=phong_id)
+            
+            if phong.soluong >= soluong_phong:
+                phong.soluong -= soluong_phong
+                if phong.soluong > 0:
+                    phong.active = True
+                elif phong.soluong == 0:
+                    phong.active = False
+                phong.save()
+                # Tạo đơn đặt phòng 
+                payment_status = True if payment_method == 'bank' else False
+                hoa_don = HoaDon.objects.create(
+                    id=payment.order_id,
+                    user=cutomer,
+                    payment_method=payment_method, 
+                    payment_status=payment_status# Giả sử user là một ID, cập nhật nếu cần thi
+                    # thanhtoan= payment.id
+                )
 
-        # Tạo đối tượng HoaDon
-        payment_status = True if payment_method == 'bank' else False
-        hoa_don = HoaDon.objects.create(
-            id=payment.order_id,
-            user=cutomer,
-            payment_method=payment_method, 
-            payment_status=payment_status# Giả sử user là một ID, cập nhật nếu cần thi
-            # thanhtoan= payment.id
-        )
-
-        # Tạo đối tượng ChiTietHoaDon
-        chi_tiet_hoa_don = ChiTietHoaDon.objects.create(
-            hoadon=hoa_don,
-            phong_id=phong_id,
-            ngay_gio_nhan =ngay_gio_nhan ,
-            ngay_gio_tra =ngay_gio_tra,
-            soluong_dem=soluong_dem,
-            soluong_phong=soluong_phong,
-            dongia=amount
-        )
+                # Tạo đối tượng ChiTietHoaDon
+                chi_tiet_hoa_don = ChiTietHoaDon.objects.create(
+                    hoadon=hoa_don,
+                    phong_id=phong_id,
+                    ngay_gio_nhan =ngay_gio_nhan ,
+                    ngay_gio_tra =ngay_gio_tra,
+                    soluong_dem=soluong_dem,
+                    soluong_phong=soluong_phong,
+                    tongtien=amount,
+                    dongia = giaphong,
+                )
 
         if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":

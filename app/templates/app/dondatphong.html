@@ -26,8 +26,21 @@
                     </button>
                 {% endif %}
                 
-                <button type="button" class="btn btn-primary btn btn-light btn-lg me-2 huyphong" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-hoadon-id="{{ hoadon.id }}" data-phong-id="{{ chitiethoadon.phong.id }}">
-                    Hủy phòng</button>  
+                {% if not hoadon.payment_status %}
+                    {% if hoadon.active %}
+                        <button type="button" class="btn btn-primary btn btn-light btn-lg me-2 huyphong" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-hoadon-id="{{ hoadon.id }}" data-phong-id="{{ chitiethoadon.phong.id }}">
+                            Hủy phòng
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black" disabled>
+                            Đã hủy phòng
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black" disabled>
+                        Đã thanh toán
+                    </button>
+                {% endif %}
             </div>
             {% endfor %} 
         </div>

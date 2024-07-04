@@ -280,36 +280,51 @@
     });
 </script>
 <script>
-        // Lấy giá từ phần tử HTML
-        var dongia = "{{ total }}";
-        sessionStorage.setItem("totalPrice", dongia);
-        // Lưu giá vào cookie với hạn sử dụng (expiry) là 1 ngày
-        document.cookie = "totalPrice=" + dongia + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-    
-        var user = "{{ user.username }}";
-        var phong_id = "{{ phong_id }}";
-        var ngay_gio_nhan = "{{ ngay_gio_nhan}}";
-        var ngay_gio_tra = "{{ ngay_gio_tra }}";
-        var soluong_dem = "{{ so_dem }}";
-        var soluong_phong ="{{slphong}}";
-        
+     // Hàm xóa cookie cũ
+     function deleteCookie(name) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/; SameSite=None; Secure';
+    }
 
-        // Lưu các giá trị khác vào cookie
-        document.cookie = "totalPrice=" + dongia + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        document.cookie = "user=" + user + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        document.cookie = "phong_id=" + phong_id + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        document.cookie = "ngay_gio_nhan=" + ngay_gio_nhan + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        document.cookie = "soluong_dem=" + soluong_dem + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        document.cookie = "soluong_phong=" + soluong_phong + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        function setPaymentMethod(method) {
-            // Cập nhật giá trị của phần tử input ẩn
-            document.getElementById('payment_method').value = method;
-            
-            // Lưu giá trị vào cookie
-            document.cookie = "payment_method=" + method + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
-        }
+    // Lấy giá từ phần tử HTML
+    var tongtien = "{{ total }}";
+    sessionStorage.setItem("totalPrice", tongtien);
 
+    var user = "{{ user.username }}";
+    var phong_id = "{{ phong_id }}";
+    var ngay_gio_nhan = "{{ ngay_gio_nhan }}";
+    var ngay_gio_tra = "{{ ngay_gio_tra }}";
+    var soluong_dem = "{{ so_dem }}";
+    var soluong_phong = "{{ slphong }}";
+    var giaphong = "{{dongia}}";
 
+    // Xóa cookie cũ
+    deleteCookie("totalPrice");
+    deleteCookie("user");
+    deleteCookie("phong_id");
+    deleteCookie("ngay_gio_nhan");
+    deleteCookie("ngay_gio_tra");
+    deleteCookie("soluong_dem");
+    deleteCookie("soluong_phong");
+
+    // Thiết lập cookie mới với hạn sử dụng (expiry) là 1 ngày
+    document.cookie = "totalPrice=" + tongtien + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "user=" + user + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "phong_id=" + phong_id + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "ngay_gio_nhan=" + ngay_gio_nhan + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "ngay_gio_tra=" + ngay_gio_tra + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "soluong_dem=" + soluong_dem + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "soluong_phong=" + soluong_phong + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    document.cookie = "giaphong=" + giaphong + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    function setPaymentMethod(method) {
+        // Cập nhật giá trị của phần tử input ẩn
+        document.getElementById('payment_method').value = method;
+
+        // Xóa cookie cũ
+        {% comment %} deleteCookie("payment_method"); {% endcomment %}
+
+        // Lưu giá trị vào cookie
+        document.cookie = "payment_method=" + method + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/; SameSite=None; Secure";
+    }
     
 </script>
 
