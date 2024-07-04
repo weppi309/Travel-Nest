@@ -22,6 +22,7 @@ urlpatterns = [
     path('search/', views.search, name = 'search'),
     path('datphong/', views.datphong, name = "datphong"),
     path('dondatphong/', views.dondatphong, name = "dondatphong"),
+    path('update-huyen-list/', views.update_huyen_list, name='update_huyen_list'),
     # path('custom-dashboard/', views.index, name='custom_dashboard'),
     # # path('custom-profile/', views.profile, name='custom_profile'),
     # path('customer-dashboard/', views.dashboard, name='customer_dashboard'),

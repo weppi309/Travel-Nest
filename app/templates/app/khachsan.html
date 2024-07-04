@@ -6,551 +6,538 @@
   <div class='l'>
     <div class='l1 boxm'>
         <a class='t-link' href="{% url 'home'%}">Trang chủ</a>
-        <span> > </span>
-        <a class='t-link' href="{% url 'ds' %}?tinh_id={{ tinh_id }}&tinh_name={{ tinh_name }}">{{ tinh_name }}</a>
-        <span> > </span>
+        {% if tentinh %}
+          <span> > </span>
+          <a class='t-link' href="{% url 'search' %}?tinh_id={{ tinh_id }}&tinh_name={{ tinh_name }}">{{ tinh_name }}</a>
+        {% else %}
+          <span> > </span>
+          <a class='t-link' href="{% url 'search' %}?tinh={{ search }}">{{ search }}</a>
+        {% endif %}
         <a class='t-link' href="{% url 'ks' %}?khachsan_id={{ khachsan_id }}">{{ khachsan_name }}</a>
         <span> > </span>
         <a>Ưu đãi khi lần đầu tiên đặt phòng bên {{ khachsan_name }}</a>
     </div>
-    <!--giới thiệu-->
-    <div class='boxm1'>
-      <div>
-        <h1 id='ksmorin'>{{khachsan_name}}</h1>       
-      </div>
-      {% comment %} action ="{%url 'ks'%}?khachsan_id={{ khachsan_id }}&ngay_nhan={{check_in}}&ngay_tra={{check_out}}" {% endcomment %}
-      <form  method="POST" data-ks-id="{{ khachsan_id }}" action="{%url 'ks'%}" id ='ksform' onsubmit="updateAction()">
-        {% csrf_token %}
-        <div class='row fixed-box '>
-          <h3>Chọn ngày để xem giá</h3>
-          <div class=' col-md-3'>
-            <div class='g2'>
-              <label for="check-in">Ngày nhận phòng:</label>
-              <input onclick="setdate()"  type="datetime-local"id="check-in"  name="check-in" min="<?php echo date('Y-m-d'); ?>" required>
-            </div>
+   <!--giới thiệu-->
+   <div class='boxm1'>
+    <div>
+      <h1 id='ksmorin'>{{khachsan_name}}</h1>       
+    </div>
+    {% comment %} action ="{%url 'ks'%}?khachsan_id={{ khachsan_id }}&ngay_nhan={{check_in}}&ngay_tra={{check_out}}" {% endcomment %}
+    <form  method="POST" data-ks-id="{{ khachsan_id }}" action="{%url 'ks'%}" id ='ksform' onsubmit="updateAction()">
+      {% csrf_token %}
+      <div class='row fixed-box '>
+        <h3>Chọn ngày để xem giá</h3>
+        <div class=' col-md-3'>
+          <div class='g2'>
+            <label for="check-in">Ngày nhận phòng:</label>
+            <input onclick="setdate()"  type="datetime-local"id="check-in"  name="check-in" min="<?php echo date('Y-m-d'); ?>" required>
           </div>
-          <div class='col-md-3'>
+        </div>
+        <div class='col-md-3'>
+          <div >
+            <label for="check-out">Ngày trả phòng:</label>
+            <input onclick="setdate()" type="datetime-local" id="check-out" name="check-out" min="<?php echo date('Y-m-d'); ?>" required>
+          </div>
+          
+        </div>
+        <div class='col-md-2 '>
+          <button class="uitk-button uitk-button-medium bg-white text-black g3" name='soluong' id="guestCountButton"  type="button" aria-expanded="false" aria-label="Chọn số khách, số phòng" >
+            1 khách, 1 phòng
+          </button>
+          <div class= 'dropdown-menu' id="guestCountDropdown" style="display: none;" aria-hidden="true">
+            <div>
+              <div class='row'>
+                <div class='col'>
+                  <a class="dropdown-item" href="#">Người lớn</a>
+                </div>
+                <div class='col'>
+                  <div class='boxm'>
+                    <button class='btn_a' type="button" onclick="decrementValue('adult')">-</button>
+                    <input class='vao' value='1'id="adultCount">
+                    <button class='btn_a' type="button" onclick="incrementValue('adult')">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class='row'>
+                <div class='col'>
+                  <a class="dropdown-item" href="#">Trẻ em</a>
+                </div>
+                <div class='col'>
+                  <div class='boxm'>
+                    <button class='btn_a' type="button" onclick="decrementValue('child')">-</button>
+                    <input class='vao' value='0' id="childCount">
+                    <button class='btn_a' type="button" onclick="incrementValue('child')">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class='row'>
+                <div class='col'>
+                  <a class="dropdown-item" href="#">Phòng</a>
+                </div>
+                <div class='col'>
+                  <div class='boxm'>
+                    <button class='btn_a' type="button" onclick="decrementValue('room')">-</button>
+                    <input class='vao' value='1' id="roomCount">
+                    <button class='btn_a' type="button"onclick="incrementValue('room')">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn_ht" type='button'  id="doneButton">Xong</button>
+          </div>
+        </div>
+        <div class='col-md-3 btnpt'>
+          
+          <button class='btn_pt ktr'>
+            <a href ='#phong' style ="color:#000">Kiểm tra phòng trống</a>
+          </button>
+
+
+        </div>
+      </div> </br>
+    </form>
+
+
+    <!--anh-->
+    <div>
+      <div class="boxtt">
+        <div id="carouselExample{{ forloop.counter }}" class="carousel slide">
+            <div class="carousel-inner">
+                {% for anh in listanhks %}
+                    {% if forloop.first %}
+                        <div class="carousel-item active">
+                    {% else %}
+                        <div class="carousel-item">
+                    {% endif %}
+                    <img src="{{ anh.anhks.url}}" class="card-img-top" height="450px" style="margin-top:15px">
+                </div>
+                {% endfor %}
+            </div> 
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class='container-col l2 '>
+      <div class="row " data-bs-spy="scroll" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true">
+        <div class="col hover-element" >
+          <a class='sn' href='#ksmorin'>Tổng quan</a>
+          
+        </div>
+        <div class="col hover-element">
+          <a class='sn' href='#phi'>Thông tin và phí </a>
+          
+        </div>
+        <div class="col hover-element">
+          <a class='sn' href='#chinhsach'>Chính sách</a>
+          
+        </div>
+        <div class="col hover-element">
+          <a class='sn' href='#nhanxet'>Đánh giá</a>
+          
+        </div>
+      </div>
+  </div>
+  <!--mô tả-->
+  <div class='row row-cols-2 boxm1'>
+    <div class='col' >
+      <div class="col-sm-3 cn ">
+        <div class='nd1'>
+          <a href="{% url 'ks'%}"><button class='diem'>{{diemtb_danhgia}}</button></a>
             <div >
-              <label for="check-out">Ngày trả phòng:</label>
-              <input onclick="setdate()" type="datetime-local" id="check-out" name="check-out" min="<?php echo date('Y-m-d'); ?>" required>
+                <h5><strong>{{tendiem_tb}}<strong></h5>
             </div>
-            
-          </div>
-          <div class='col-md-2 '>
-            <button class="uitk-button uitk-button-medium bg-white text-black g3" name='soluong' id="guestCountButton"  type="button" aria-expanded="false" aria-label="Chọn số khách, số phòng" >
-              1 khách, 1 phòng
-            </button>
-            <div class= 'dropdown-menu' id="guestCountDropdown" style="display: none;" aria-hidden="true">
-              <div>
-                <div class='row'>
-                  <div class='col'>
-                    <a class="dropdown-item" href="#">Người lớn</a>
-                  </div>
-                  <div class='col'>
-                    <div class='boxm'>
-                      <button class='btn_a' type="button" onclick="decrementValue('adult')">-</button>
-                      <input class='vao' value='1'id="adultCount">
-                      <button class='btn_a' type="button" onclick="incrementValue('adult')">+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div class='row'>
-                  <div class='col'>
-                    <a class="dropdown-item" href="#">Trẻ em</a>
-                  </div>
-                  <div class='col'>
-                    <div class='boxm'>
-                      <button class='btn_a' type="button" onclick="decrementValue('child')">-</button>
-                      <input class='vao' value='0' id="childCount">
-                      <button class='btn_a' type="button" onclick="incrementValue('child')">+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div class='row'>
-                  <div class='col'>
-                    <a class="dropdown-item" href="#">Phòng</a>
-                  </div>
-                  <div class='col'>
-                    <div class='boxm'>
-                      <button class='btn_a' type="button" onclick="decrementValue('room')">-</button>
-                      <input class='vao' value='1' id="roomCount">
-                      <button class='btn_a' type="button"onclick="incrementValue('room')">+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button class="btn_ht" type='button'  id="doneButton">Xong</button>
-            </div>
-          </div>
-          <div class='col-md-3 btnpt'>
-            
-            <button class='btn_pt ktr'>
-              <a href ='#phong' style ="color:#000">Kiểm tra phòng trống</a>
-            </button>
-
-  
-          </div>
-        </div> </br>
-      </form>
-
-  
-      <!--anh-->
-      <div>
-        <div class='bacot'>
-          
-          {% comment %} <div>
-            <a><img class='anhlon' src="{{anh.anhks.url}}"></img></a>
-          </div> {% endcomment %}
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
-          </div>
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
-          </div>
-          
-          
-        </div>
-        
-      </div>
-    </div>
-
-    <div class='container-col l2 '>
-        <div class="row " data-bs-spy="scroll" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true">
-          <div class="col hover-element" >
-            <a class='sn' href='#ksmorin'>Tổng quan</a>
-            
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#tiennghi'>Tiện nghi</a>
-            
-
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#phi'>Thông tin và giá</a>
-            
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#chinhsach'>Chính sách</a>
-            
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#nhanxet'>Đánh giá</a>
-            
-          </div>
-        </div>
-    </div>
-    <!--mô tả-->
-    <div class='row row-cols-2 boxm1'>
-      <div class='col' >
-        <div class="col-sm-3 cn ">
-          <div class='nd1'>
-            <a href="{% url 'ks'%}"><button class='diem'>{{diemtb_danhgia}}</button></a>
-              <div >
-                  <h5><strong>{{tendiem_tb}}<strong></h5>
-              </div>
-          </div>
-        </div>
-        <a href="{% url 'ks'%}" ><h6>Xem tất cả nhận xét ></h6></a>
-        <h5><strong>Dịch vụ nổi bật</strong></h5>
-        <div class='row row-cols-2'>
-          {% for tn in tiennghis %}
-          <div class='col'>
-            <h6 style="border: 2px solid #ddd; border-radius: 10px; text-align: center; height:40px; padding-top: 10px;"><i>* {{dv.tendichvu}}</i></h6>
-          </div>
-          {% endfor %}
-
         </div>
       </div>
-      <div class='col benphai'>
-        <div id="map"  class='bando'></div>
-        <div class='bentrai'>
-          <h6 id ="diachi">{{khachsan.diachi}}</h6>
-          <h5><strong>Khám phá khu vực</strong></h5>
-          <a href='#' style='font:arial'>Xem chi tiết </a>
-
+      <a href="{% url 'ks'%}" ><h6>Xem tất cả nhận xét ></h6></a>
+      <h5><strong>Dịch vụ nổi bật</strong></h5>
+      <div class='row row-cols-2'>
+        {% for dv in listdichvu %}
+        <div class='col'>
+          <h6 style="border: 2px solid #ddd; border-radius: 10px; text-align: center; height:40px; padding-top: 10px;"><i>* {{dv.tendichvu}}</i></h6>
         </div>
+        {% endfor %}
+
       </div>
     </div>
+    <div class='col benphai'>
+      <div id="map"  class='bando'></div>
+      <div class='bentrai'>
+        <h6 id ="diachi">{{khachsan.diachi}}</h6>
+        <h5><strong>Khám phá khu vực</strong></h5>
+        <a href='#' style='font:arial'>Xem chi tiết </a>
+
+      </div>
+    </div>
+  </div>
 
 
-    <!--phòng-->
-    <div class='brm1 top2' id='danh-sach-phong'>
-      <h3 id='phong'><strong>Chọn phòng</strong></h3>
-        <div class ='row'>
-          <div class= "col">
-            <table class="table table-bordered" >
-              <thead  style="background-color:#7E8EF1; width: 100%;" >
-                <tr>
-                  <th class="col-4">Loại phòng</th>
-                  <th class="col-2">Số lượng khách</th>
-                  <th class="col-2">Giá phòng</th>
-                  <th class="col-2">Chọn phòng</th>
-                  <th class="col-2"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for phong in listphong %}
-                <tr>
-                  <th >
-                    <h2>{{phong.tenphong}}</h2>
-                    <div id="carouselExampleControlsNoTouching{{ phong.id }}" class="carousel slide" data-bs-touch="false">
-                      <div class="carousel-inner card_anh">
-                          {% for anhphong in phong.anhphong_set.all %}
-                          <div class="carousel-item active">
-                              <img src="{{ anhphong.anhphong.url }}" alt="Ảnh phòng">
-                          </div>
-                          {% endfor %}
-                      </div>
-                      <button class="carousel-control-prev card_nut" type="button" data-bs-target="#carouselExampleControlsNoTouching{{ phong.id }}" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Previous</span>
-                      </button>
-                      <button class="carousel-control-next card_nut" type="button" data-bs-target="#carouselExampleControlsNoTouching{{ phong.id }}" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Next</span>
-                      </button>
-                    </div>
-
-                    <p>Diện tích phòng: {{phong.dientich}}</p>
-                    <div class='row'>
-                      <div class ='col-4'><p>Tiện nghi:</p></div>
-                      <div class ='col'>
-                        {% for tiennghi in phong.tiennghi.all  %}
-                        <div>
-                          <a><img class='icon' src="{{tiennghi.icon.url}}"></img>{{ tiennghi.tentiennghi }}</a>
-                          <h6></h6>
+  <!--phòng-->
+  <div class='brm1 top2' id='danh-sach-phong'>
+    <h3 id='phong'><strong>Chọn phòng</strong></h3>
+      <div class ='row'>
+        <div class= "col">
+          <table class="table table-bordered" >
+            <thead  style="background-color:#7E8EF1; width: 100%;" >
+              <tr>
+                <th class="col-4">Loại phòng</th>
+                <th class="col-2">Số lượng khách</th>
+                <th class="col-2">Giá phòng</th>
+                <th class="col-2">Chọn phòng</th>
+                <th class="col-2"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for phong in listphong %}
+              <tr>
+                <th >
+                  <h2>{{phong.tenphong}}</h2>
+                  <div id="carouselExampleControlsNoTouching{{ phong.id }}" class="carousel slide" data-bs-touch="false">
+                    <div class="carousel-inner card_anh">
+                        {% for anhphong in phong.anhphong_set.all %}
+                        <div class="carousel-item active">
+                            <img src="{{ anhphong.anhphong.url }}" alt="Ảnh phòng">
                         </div>
                         {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev card_nut" type="button" data-bs-target="#carouselExampleControlsNoTouching{{ phong.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next card_nut" type="button" data-bs-target="#carouselExampleControlsNoTouching{{ phong.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+
+                  <p>Diện tích phòng: {{phong.dientich}}</p>
+                  <div class='row'>
+                    <div class ='col-4'><p>Tiện nghi:</p></div>
+                    <div class ='col'>
+                      {% for tiennghi in phong.tiennghi.all  %}
+                      <div>
+                        <a><img class='icon' src="{{tiennghi.icon.url}}"></img>{{ tiennghi.tentiennghi }}</a>
+                        <h6></h6>
                       </div>
+                      {% endfor %}
                     </div>
-                  </th>
-                  <td>{{phong.soluongnguoi}} người</td>
-                  <td class ="giaphong">{{phong.giaphong}}</td>
-                  <td>
-                    <div class="dropdown" id="dropdown-container-{{ phong.id }}">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                          0
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ phong.id }}" id="dropdown-menu-{{ phong.id }}">
-                          {% for i in phong.range_soluong %}
-                          <li><button class="dropdown-item" value="{{ i }}">{{ i }}</button></li>
-                          {% endfor %}
-                      </ul>
-                      <input type="hidden" id="quantityInput-{{ phong.id }}" name="quantity" value="0">
-                    </div>
-                  </td>
-                  <td>
-                      <button data-phong="{{phong.id}}" class="btn btn-primary datphong">Tôi đặt phòng</button>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-    </div>
-        
-    <!-- thông tin tiện nghi-->
-    <div class='row boxm1'>
-      <div class='col'>
-        <h2 id='tiennghi'>Tiện nghi dịch vụ nơi lưu trú</h2>
-      </div>
-      <div class='col'>
-        <div class='row row-cols-2'>
-          {% for tn in tiennghis  %}
-          <div class='col'>
-            <div>
-              <h6><strong>
-                {{tn.tiennghi.tentiennghi}}
-              </strong><h6>
-                <h6>{{tn.tiennghi.mota_tiennghi}}</h6>
-            </div>
-          </div>
-          {% endfor %}
+                  </div>
+                </th>
+                <td>{{phong.soluongnguoi}} người</td>
+                <td class ="giaphong">
+                  {% if phong.khuyenmai.exists %}
+                      <p style="text-decoration: line-through;color: red;">{{ phong.giaphong_vnd }} VND</p>
+                      <h6 style ="color: blue;">Phòng được khuyến mãi!</h6>
+                      <p >{{ phong.get_discounted_price}} VND</p>
+                  {% else %}
+                      <p>{{ phong.giaphong_vnd }} VND</p>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="dropdown" id="dropdown-container-{{ phong.id }}">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                        0
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ phong.id }}" id="dropdown-menu-{{ phong.id }}">
+                        {% for i in phong.range_soluong %}
+                        <li><button class="dropdown-item" value="{{ i }}">{{ i }}</button></li>
+                        {% endfor %}
+                    </ul>
+                    <input type="hidden" id="quantityInput-{{ phong.id }}" name="quantity" value="0">
+                  </div>
+                </td>
+                <td>
+                    <button data-phong="{{phong.id}}" class="btn btn-primary datphong">Tôi đặt phòng</button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
-
-    </div>
-
-    <!--chính sách-->
-    <div class='row boxm1'>
-      <div class='col'>
-        <h2 id='chinhsach'>Chính sách</h2>
-      </div>
-      <div class='col'>
-        <div class='row'>
-          <div class='col'>
-            <h6><strong>
-              Nhận phòng 
-            </strong><h6>
-              <h6>Giờ nhận phòng từ: 14:00 đến nửa đêm
-                </h6>
-          </div>
-          <div class='col'>
-            <h6><strong>
-              Trả phòng 
-            </strong><h6>
-              <h6>Trả phòng trước 12:00
-                </h6>
-          </div>
-        </div>  
-        <div>
-          <h6><strong>
-            Hướng dẫn đặt phòng
-          </strong><h6>
-            <h6>Khách phải liên lạc trước với nơi lưu trú để nhận hướng dẫn nhận phòng; nhân viên tiếp tân sẽ đón tiếp khách tại nơi lưu trú
-              </h6>
-        </div>
-        <div>
-          <h6><strong>
-            Hướng dẫn nhận chỗ
-          </strong><h6>
-            <h6>Người gác cửa
-              </h6>
-        </div>
-        <div>
-          <h6><strong>
-            Vật nuôi
-          </strong><h6>
-            <h6>Không được mang theo thú cưng lẫn vật nuôi hỗ trợ người khuyết tật
-              </h6>
-        </div>
-        <div>
-          <h6><strong>
-            Giường bổ sung
-          </strong><h6>
-            <h6>Trẻ em được chào đón
-              Khách có thể yêu cầu giường gấp/giường phụ với phụ phí 900000.0 VNĐ mỗi đêm
-              </h6>
-        </div>
-      </div>
-    </div>
-    <!--phí-->
-    <div class='row boxm1'>
-      <div class='col'>
-        <h2 id='phi'>Thông tin quan trọng</h2>
-      </div>
-      <div class='col'>
-        <div>
-          <h6><strong>
-            Phí
-          </strong><h6>
-            <h6>
-              Đặt cọc: 500000 VNĐ mỗi nơi lưu trú, mỗi đêm.
-            </h6>
-        </div>
-        <div>
-          <h6><strong>
-            Phí tùy chọn
-          </strong><h6>
-            <h6>Phụ phí bữa sáng buffet (ước tính): người lớn - 900000 VNĐ; trẻ em - 320000 VNĐ
-            
-              </h6>
-        </div>
-        <div>
-          <h6><strong>
-            Cần biết
-          </strong><h6>
-            <h6>Có thể cần giấy tờ tùy thân hợp pháp có ảnh và cần đặt cọc bằng thẻ tín dụng, thẻ ghi nợ hoặc tiền mặt (cho các chi phí phát sinh - nếu có) khi làm thủ tục nhận phòng
-              </h6>
-        </div>
-      </div>
-    </div>
-    <!--đánh giá-->
-    <div class='row boxm1 top2'>
-      <h3 id='nhanxet'>Nhận xét khách sạn {{khachsan_name}}</h3>
-      <div class='col'>
-        <div class='row'>
-          <div class='col-sm-2'>
-            <h2 class='htt'>{{diemtb_danhgia}}</h2>
-          </div>
-          <div class='col phai'>
-            <a><h6>{{tendiem_tb}}</h6></a>
-            <a><h6>{{tong_danhgia}} nhận xét</h6></a>
-            <a><h6><i>Nhận xét đã được xác thực</h6></i></a>
-          </div>
-        </div>
+  </div>
       
-        <div class='g1'>
-          <h6>10 - Xuất sắc</h6>
-          <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 90%"></div>
-          </div>
+
+  <!--chính sách-->
+  <div class='row boxm1'>
+    <div class='col'>
+      <h2 id='chinhsach'>Chính sách</h2>
+    </div>
+    <div class='col'>
+      <div class='row'>
+        <div class='col'>
+          <h6><strong>
+            Nhận phòng 
+          </strong><h6>
+            <h6>Giờ nhận phòng từ: 14:00 đến nửa đêm
+              </h6>
         </div>
-        <div class='g1'>
-          <h6>8 - Tốt</h6>
-          <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 50%"></div>
-          </div>
+        <div class='col'>
+          <h6><strong>
+            Trả phòng 
+          </strong><h6>
+            <h6>Trả phòng trước 12:00
+              </h6>
         </div>
-        <div class='g1'>
-          <h6>7 - Tạm ổn</h6>
-          <div class="progress " role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 25%"></div>
-          </div>
-        </div>
-        <div class='g1'>
-          <h6>5 - Chưa tốt</h6>
-          <div class="progress  " role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 0%"></div>
-          </div>
-        </div>
-        </br>
+      </div>  
+      <div>
+        <h6><strong>
+          Hướng dẫn đặt phòng
+        </strong><h6>
+          <h6>Khách phải liên lạc trước với nơi lưu trú để nhận hướng dẫn nhận phòng; nhân viên tiếp tân sẽ đón tiếp khách tại nơi lưu trú
+            </h6>
       </div>
-      <div class='col'>
-        {% if danhgias %}
-          {% for danhgia in danhgias  %}
-          <div class='boxm3'>
-            <h6><strong>{{danhgia.diem}}/10 - {{danhgia.get_danh_gia}}</strong></h6>
-            <h6>Tên: {{danhgia.hoadon.user.username}}</h6>
-            <h6>{{danhgia.created_date}}</h6>
-            <h6>Bình luận: {{danhgia.binhluan}}</h6>
-          </div>
-          {% endfor %}
-        {% else %}
-        <!-- Hiển thị thông báo khi chưa có đánh giá nào -->
-          <h6><strong>Chưa có đánh giá nào!!!</strong></h6>
-        {% endif %}
+      <div>
+        <h6><strong>
+          Hướng dẫn nhận chỗ
+        </strong><h6>
+          <h6>Người gác cửa
+            </h6>
+      </div>
+      <div>
+        <h6><strong>
+          Vật nuôi
+        </strong><h6>
+          <h6>Không được mang theo thú cưng lẫn vật nuôi hỗ trợ người khuyết tật
+            </h6>
+      </div>
+      <div>
+        <h6><strong>
+          Giường bổ sung
+        </strong><h6>
+          <h6>Trẻ em được chào đón
+            Khách có thể yêu cầu giường gấp/giường phụ với phụ phí 900000.0 VNĐ mỗi đêm
+            </h6>
+      </div>
+    </div>
+  </div>
+  <!--phí-->
+  <div class='row boxm1'>
+    <div class='col'>
+      <h2 id='phi'>Thông tin quan trọng</h2>
+    </div>
+    <div class='col'>
+      <div>
+        <h6><strong>
+          Phí
+        </strong><h6>
+          <h6>
+            Đặt cọc: 500000 VNĐ mỗi nơi lưu trú, mỗi đêm.
+          </h6>
+      </div>
+      <div>
+        <h6><strong>
+          Phí tùy chọn
+        </strong><h6>
+          <h6>Phụ phí bữa sáng buffet (ước tính): người lớn - 900000 VNĐ; trẻ em - 320000 VNĐ
+          
+            </h6>
+      </div>
+      <div>
+        <h6><strong>
+          Cần biết
+        </strong><h6>
+          <h6>Có thể cần giấy tờ tùy thân hợp pháp có ảnh và cần đặt cọc bằng thẻ tín dụng, thẻ ghi nợ hoặc tiền mặt (cho các chi phí phát sinh - nếu có) khi làm thủ tục nhận phòng
+            </h6>
+      </div>
+    </div>
+  </div>
+  <!--đánh giá-->
+  <div class='row boxm1 top2'>
+    <h3 id='nhanxet'>Nhận xét khách sạn {{khachsan_name}}</h3>
+    <div class='col'>
+      <div class='row'>
+        <div class='col-sm-2'>
+          <h2 class='htt'>{{diemtb_danhgia}}</h2>
+        </div>
+        <div class='col phai'>
+          <a><h6>{{tendiem_tb}}</h6></a>
+          <a><h6>{{tong_danhgia}} nhận xét</h6></a>
+          <a><h6><i>Nhận xét đã được xác thực</h6></i></a>
+        </div>
+      </div>
+    
+      <div class='g1'>
+        <h6>10 - Xuất sắc</h6>
+        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" style="width: 90%"></div>
+        </div>
+      </div>
+      <div class='g1'>
+        <h6>8 - Tốt</h6>
+        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" style="width: 50%"></div>
+        </div>
+      </div>
+      <div class='g1'>
+        <h6>7 - Tạm ổn</h6>
+        <div class="progress " role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" style="width: 25%"></div>
+        </div>
+      </div>
+      <div class='g1'>
+        <h6>5 - Chưa tốt</h6>
+        <div class="progress  " role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" style="width: 0%"></div>
+        </div>
       </div>
       </br>
     </div>
-    
-    <div class='textend'>
-      <b>Khám phá du lịch xung quanh cùng TravelNest</b>
-     
-      <p>TravelNest.com</p>
+    <div class='col'>
+      {% if danhgias %}
+        {% for danhgia in danhgias  %}
+        <div class='boxm3'>
+          <h6><strong>{{danhgia.diem}}/10 - {{danhgia.get_danh_gia}}</strong></h6>
+          <h6>Tên: {{danhgia.hoadon.user.username}}</h6>
+          <h6>{{danhgia.created_date}}</h6>
+          <h6>Bình luận: {{danhgia.binhluan}}</h6>
+        </div>
+        {% endfor %}
+      {% else %}
+      <!-- Hiển thị thông báo khi chưa có đánh giá nào -->
+        <h6><strong>Chưa có đánh giá nào!!!</strong></h6>
+      {% endif %}
     </div>
-
+    </br>
   </div>
+  
+  <div class='textend'>
+    <b>Khám phá du lịch xung quanh cùng TravelNest</b>
+   
+    <p>TravelNest.com</p>
+  </div>
+
+</div>
 </div>
 <script>
-  // Lấy địa chỉ từ thẻ HTML có id="diachi"
-  var address = document.getElementById('diachi').textContent;
+// Lấy địa chỉ từ thẻ HTML có id="diachi"
+var address = document.getElementById('diachi').textContent;
 
-  // Tạo URL của Google Maps Static API dựa trên địa chỉ
-  var apiKey = "YOUR_API_KEY"; // Thay thế bằng API Key của bạn
-  var mapUrl = https://maps.googleapis.com/maps/api/staticmap?center=${address}&zoom=15&size=400x400&key=${apiKey};
+// Tạo URL của Google Maps Static API dựa trên địa chỉ
+var apiKey = "YOUR_API_KEY"; // Thay thế bằng API Key của bạn
+var mapUrl = https://maps.googleapis.com/maps/api/staticmap?center=${address}&zoom=15&size=400x400&key=${apiKey};
 
-  // Lấy thẻ <img> bằng id và đặt thuộc tính src
-  var mapImage = document.getElementById("map-image");
-  mapImage.src = mapUrl;
+// Lấy thẻ <img> bằng id và đặt thuộc tính src
+var mapImage = document.getElementById("map-image");
+mapImage.src = mapUrl;
 </script>
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var dropdowns = document.querySelectorAll('.dropdown-menu');
-    var priceContent = document.getElementById('price-content');
+document.addEventListener("DOMContentLoaded", function() {
+  var dropdowns = document.querySelectorAll('.dropdown-menu');
+  var priceContent = document.getElementById('price-content');
 
-    dropdowns.forEach(function(dropdown) {
-      if (dropdown) {
-          dropdown.addEventListener('click', function(event) {
-              var target = event.target;
-              if (target.classList.contains('dropdown-item')) {
-                  var value = target.value;
-                  var dropdownId = dropdown.id.replace('dropdown-menu', '');
-                  var button = document.getElementById('dropdownMenuButton' + dropdownId);
-                  button.innerText = value;
+  dropdowns.forEach(function(dropdown) {
+    if (dropdown) {
+        dropdown.addEventListener('click', function(event) {
+            var target = event.target;
+            if (target.classList.contains('dropdown-item')) {
+                var value = target.value;
+                var dropdownId = dropdown.id.replace('dropdown-menu', '');
+                var button = document.getElementById('dropdownMenuButton' + dropdownId);
+                button.innerText = value;
 
 
-              }
-          });
-      }
-    });
+            }
+        });
+    }
   });
+});
 </script> 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var modalButtons = document.querySelectorAll('button[data-bs-target="#exampleModal"]');
-    var phongIdInput = document.querySelector('input[name="phong_id"]');
-    
-    modalButtons.forEach(function (modalButton) {
-        modalButton.addEventListener('click', function (event) {
-            var phongId = event.currentTarget.getAttribute('data-phong');
-            phongIdInput.value = phongId;
+document.addEventListener('DOMContentLoaded', function () {
+  var modalButtons = document.querySelectorAll('button[data-bs-target="#exampleModal"]');
+  var phongIdInput = document.querySelector('input[name="phong_id"]');
+  
+  modalButtons.forEach(function (modalButton) {
+      modalButton.addEventListener('click', function (event) {
+          var phongId = event.currentTarget.getAttribute('data-phong');
+          phongIdInput.value = phongId;
+      });
+  });
+});
+</script> 
+
+<script>
+$(document).ready(function () {
+    // Lắng nghe sự kiện thay đổi của ô ngày check-in và check-out
+    $("#check-in, #check-out").change(function () {
+        // Lấy giá trị từ ô ngày check-in và check-out
+        var checkInDate = $("#check-in").val();
+        var checkOutDate = $("#check-out").val();
+
+        // Thực hiện AJAX để gửi yêu cầu đến máy chủ
+        $.ajax({
+            url: 'ks',  // Thay đổi đường dẫn tương ứng với view xử lý yêu cầu
+            type: 'GET',
+            data: {
+                'check_in_date': checkInDate,
+                'check_out_date': checkOutDate
+            },
+            success: function (data) {
+                // Cập nhật danh sách phòng trống trên trang
+                $("#danh-sach-phong").html(data);
+            },
+            error: function () {
+                console.log('Đã xảy ra lỗi trong quá trình tải danh sách phòng.');
+            }
         });
     });
 });
 </script> 
 
 <script>
-  $(document).ready(function () {
-      // Lắng nghe sự kiện thay đổi của ô ngày check-in và check-out
-      $("#check-in, #check-out").change(function () {
-          // Lấy giá trị từ ô ngày check-in và check-out
-          var checkInDate = $("#check-in").val();
-          var checkOutDate = $("#check-out").val();
 
-          // Thực hiện AJAX để gửi yêu cầu đến máy chủ
-          $.ajax({
-              url: 'ks',  // Thay đổi đường dẫn tương ứng với view xử lý yêu cầu
-              type: 'GET',
-              data: {
-                  'check_in_date': checkInDate,
-                  'check_out_date': checkOutDate
-              },
-              success: function (data) {
-                  // Cập nhật danh sách phòng trống trên trang
-                  $("#danh-sach-phong").html(data);
-              },
-              error: function () {
-                  console.log('Đã xảy ra lỗi trong quá trình tải danh sách phòng.');
-              }
-          });
-      });
-  });
-</script> 
-
-<script>
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(function(dropdown) {
-      const dropdownButton = dropdown.querySelector('.dropdown-toggle');
-      const dropdownItems = dropdown.querySelectorAll('.dropdown-item');
-      const quantityInput = dropdown.querySelector('input[type="hidden"]');
+document.addEventListener('DOMContentLoaded', function() {
+  const dropdowns = document.querySelectorAll('.dropdown');
   
-      dropdownItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-          const selectedValue = this.value;
-          dropdownButton.textContent = selectedValue;
-          quantityInput.value = selectedValue;
-        });
-      });
-    });
-  
-    const datPhongButtons = document.querySelectorAll('.datphong');
-  
-    datPhongButtons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        const phongId = this.getAttribute('data-phong');
-        const quantityInput = document.querySelector(`#quantityInput-${phongId}`);
-        const quantity = quantityInput.value;
-        var ngayNhan = document.getElementById("check-in").value;
-        var ngayTra = document.getElementById("check-out").value;
-        var phongid = $(this).data("phong");
+  dropdowns.forEach(function(dropdown) {
+    const dropdownButton = dropdown.querySelector('.dropdown-toggle');
+    const dropdownItems = dropdown.querySelectorAll('.dropdown-item');
+    const quantityInput = dropdown.querySelector('input[type="hidden"]');
 
-
-        // Create URL with query parameters
-        var url = "/datphong/?ngay_nhan=" + ngayNhan + "&ngay_tra=" + ngayTra + "&phong_id=" + phongid + "&quantity=" +quantity ;
-        window.location.href = url;
-              
+    dropdownItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        const selectedValue = this.value;
+        dropdownButton.textContent = selectedValue;
+        quantityInput.value = selectedValue;
       });
     });
   });
+
+  const datPhongButtons = document.querySelectorAll('.datphong');
+
+  datPhongButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      const phongId = this.getAttribute('data-phong');
+      const quantityInput = document.querySelector(`#quantityInput-${phongId}`);
+      const quantity = quantityInput.value;
+      var ngayNhan = document.getElementById("check-in").value;
+      var ngayTra = document.getElementById("check-out").value;
+      var phongid = $(this).data("phong");
+
+
+      // Create URL with query parameters
+      var url = "/datphong/?ngay_nhan=" + ngayNhan + "&ngay_tra=" + ngayTra + "&phong_id=" + phongid + "&quantity=" +quantity ;
+      window.location.href = url;
+            
+    });
+  });
+});
 </script>
 
 {% endblock content %}

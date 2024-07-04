@@ -9,7 +9,7 @@
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
       <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-      <link href="{% static 'app/css/css_new.css'%}" rel= "stylesheet"/>
+      <link href="{% static 'app/css/css.css'%}" rel= "stylesheet"/>
       
       <!-- add the links of bootstrap, font, icons -->
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,7 +82,11 @@
         </div>
       </nav> 
       <!--main-->
-
+      {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" style="color:red; background: #FDE49E;font-style: italic;" >{{ message }}</div>
+        {% endfor %}
+      {% endif %}
       {% block content %}
       {% endblock content %}
       <!-- footer -->
@@ -155,7 +159,7 @@
       {% comment %} <script src="{% static 'app/js/datphong.js'%}"></script> {% endcomment %}
       <script src="{% static 'app/js/map.js'%}"></script>
       <script src="{% static 'app/js/scroll.js'%}"></script>
-
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
       <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       <script>
@@ -202,7 +206,7 @@
         // Gọi hàm updateUI ban đầu
         updateUI();
       </script>
-      <script>
+      {% comment %} <script>
         $(document).ready(function () {
             $(".tinh-item").click(function () {
                 var tinhId = $(this).data("tinh-id");
@@ -211,7 +215,78 @@
                 window.location.href = url;
             });
         });
+      </script> {% endcomment %}
+      
+      {% comment %} <script>
+        function updateHuyenList() {
+            const tinhId = $('#search_tinh_id').val();
+            $.ajax({
+                url: "{% url 'update_huyen_list' %}",
+                data: {'tinh_id': tinhId},
+                success: function(data) {
+                    const khuVucDiv = $('#id_khu_vuc');
+                    khuVucDiv.empty();
+                    $.each(data.huyen_list, function(index, item) {
+                        khuVucDiv.append('<label><input type="checkbox" name="khu_vuc" value="' + item.id + '"> ' + item.tenhuyen + '</label><br>');
+                    });
+                }
+            });
+        }
+      </script>  {% endcomment %}
+      <script>
+        function updateHuyenList() {
+            const tinhId = $('#search_tinh_id').val();
+            const search = $('#search_tinh_id').val();  // Lấy giá trị search từ input
+    
+            $.ajax({
+                url: "{% url 'update_huyen_list' %}",
+                data: {
+                    'tinh_id': tinhId,
+                    'search': search
+                },
+                success: function(data) {
+                    const khuVucDiv = $('#id_khu_vuc');
+                    khuVucDiv.empty();
+                    $.each(data.huyen_list, function(index, item) {
+                        khuVucDiv.append('<label><input type="checkbox" name="khu_vuc" value="' + item.id + '"> ' + item.tenhuyen + '</label><br>');
+                    });
+                }
+            });
+        }
+    
+        {% comment %} // Gọi updateHuyenList khi thay đổi input search
+        $('#search_tinh_id').on('input', function() {
+            updateHuyenList();
+        }); {% endcomment %}
+    
+        // Gọi updateHuyenList khi thay đổi tinh_id
+        $('#search_tinh_id').change(function() {
+            updateHuyenList();
+        });
       </script>
+    
+      {% comment %} <script>
+        $(document).ready(function() {
+            $('#search-form input[type="checkbox"]').on('change', function() {
+                $.ajax({
+                    url: $('#search-form').attr('action'),
+                    data: $('#search-form').serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#search-results').html(data.html);
+                    }
+                });
+            });
+        });
+      </script> {% endcomment %}
+   
+       <script>
+          $(document).ready(function() {
+              $('#search-form input[type="checkbox"], #search-form select, #search-form input[type="text"], #search-form input[type="number"]').on('change', function() {
+                  $('#search-form').submit();
+              });
+          });
+        </script>
       <script>
         $(document).ready(function () {
             $(".ks-item").click(function () {
@@ -320,8 +395,6 @@
           var ngayNhan = document.getElementById("check-in").value;
           var ngayTra = document.getElementById("check-out").value;
           var newAction = "{% url 'ks' %}?khachsan_id=" + ksId + "&ngay_nhan=" + ngayNhan + "&ngay_tra=" + ngayTra;
-          // Tạo URL mới dựa trên giá trị ngày nhận và ngày trả          
-          // Cập nhật thuộc tính action của form
           form.action = newAction;
         }
       </script>
@@ -341,33 +414,78 @@
       </script>
       <script>
         $(document).ready(function () {
-            // Lắng nghe sự kiện thay đổi của ô ngày check-in và check-out
-            $("#check-in, #check-out").change(function () {
-                // Lấy giá trị từ ô ngày check-in và check-out
-                var checkInDate = $("#check-in").val();
-                var checkOutDate = $("#check-out").val();
+            // Lấy tinh_id và tinh_name từ context
+            var tinh_id = '{{ tinh_id }}';
+            var tinh_name = '{{ tinh_name }}';
+            
+            // Nếu tinh_id và tinh_name tồn tại, tự động điền vào ô tìm kiếm và hidden input
+            if (tinh_id && tinh_name) {
+                $('#search_tinh_id').val(tinh_name);
+                $('input[name="tinh_id"]').val(tinh_id);
+            } else {
+                // Nếu không, kiểm tra giá trị đã lưu trong sessionStorage
+                var savedSearchTinh = sessionStorage.getItem("search_tinh");
+                if (savedSearchTinh) {
+                    $('#search_tinh_id').val(savedSearchTinh);
+                }
+            }
     
-                // Thực hiện AJAX để gửi yêu cầu đến máy chủ
-                $.ajax({
-                    url: 'ks',  // Thay đổi đường dẫn tương ứng với view xử lý yêu cầu
-                    type: 'GET',
-                    data: {
-                        'check_in_date': checkInDate,
-                        'check_out_date': checkOutDate
-                    },
-                    success: function (data) {
-                        // Cập nhật danh sách phòng trống trên trang
-                        $("#danh-sach-phong").html(data);
-                    },
-                    error: function () {
-                        console.log('Đã xảy ra lỗi trong quá trình tải danh sách phòng.');
-                    }
-                });
+            // Xử lý sự kiện click vào .tinh-item
+            $('.tinh-item').click(function(event) {
+                event.preventDefault();
+    
+                var tinhId = $(this).data('tinh-id');
+                var tinhName = $(this).data('tinh-name');
+    
+                // Lưu tinh_name vào sessionStorage với key là search_tinh
+                sessionStorage.setItem('search_tinh', tinhName);
+    
+                // Điều hướng đến trang search với tham số tinh_id và tinh_name
+                var searchUrl = "{% url 'search' %}?tinh_id=" + tinhId + "&tinh_name=" + encodeURIComponent(tinhName);
+                window.location.href = searchUrl;
+            });
+    
+            // Xử lý sự kiện submit form
+            $('#homeForm').submit(function(event) {
+                event.preventDefault(); // Ngăn chặn việc submit form mặc định
+    
+                var search_tinh = $('#search_tinh_id').val();
+    
+                // Lưu giá trị search_tinh vào sessionStorage với key là search_tinh
+                sessionStorage.setItem("search_tinh", search_tinh);
+    
+                // Nếu tinh_id không tồn tại, lưu search_tinh vào sessionStorage
+                if (!tinh_id) {
+                    sessionStorage.setItem("search_tinh", search_tinh);
+                }
+    
+                // Tiếp tục submit form
+                this.submit();
             });
         });
-      </script>
-
-      
-    
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var danhgiaButtons = document.querySelectorAll('.danhgia');
+          danhgiaButtons.forEach(function(button) {
+              button.addEventListener('click', function() {
+                  var hoadonId = this.getAttribute('data-hoadon-id');
+                  var phongId = this.getAttribute('data-phong-id');
+                  document.getElementById('hoadon_id').value = hoadonId;
+                  document.getElementById('phong_id').value = phongId;
+              });
+          });
+  
+          var huyPhongButtons = document.querySelectorAll('.huyphong');
+          huyPhongButtons.forEach(function(button) {
+              button.addEventListener('click', function() {
+                  var hoadonId = this.getAttribute('data-hoadon-id');
+                  var phongId = this.getAttribute('data-phong-id');
+                  document.getElementById('modal-hoadon-id').value = hoadonId;
+                  document.getElementById('modal-phong-id').value = phongId;
+              });
+          });
+      });
+    </script>
   </body>
 </html>

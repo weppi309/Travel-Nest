@@ -1,0 +1,35 @@
+{% load static %}
+{% for khachsan in khachsan_list  %}
+    <div class='box ks-item' data-ks-id="{{ khachsan.id }}" data-ks-name="{{ khachsan.tenkhachsan }}">
+        <div class='row'>
+            <div class="col-sm-3 image-container">
+                <img class="thumbnail4" src="{{khachsan.anhkhachsan_set.first.anhks.url}}">
+                <a href="#" class="heart"><img src="{% static 'app/images/heart1.png' %}"></a>
+            </div>
+            <div class="col-sm-6">
+                <h3><strong>{{khachsan.tenkhachsan}}</strong></h3>
+                <div>
+                    <a><h6>{{khachsan.diachi}}</h6></a>
+                    <h6>{{khachsan.mota}}</h6>
+                </div>
+                    <h4><strong>{{ khachsan.phong_set.first.tenphong}}</strong></h4>
+                    <h6>* Diện tích rộng: {{khachsan.phong_set.first.dientich}}</h6>
+                    <h6>* Mô tả phòng: {{khachsan.phong_set.first.phongtam}} phòng tắm</h6></br>
+              </div>
+            <div class="col-sm-3 container4">
+                <div class='nd'>
+                  <div >
+                      <h5><strong>{{khachsan.get_danh_gia_tb}}<strong></h5>
+                      <h6 >{{khachsan.sum_danh_gia}} đánh giá</h6>
+                  </div>
+                  <button class='diem'>{{khachsan.diem_trung_binh}}</button>
+                </div>
+                <div class='bottom-right'>
+                  <h6>1 đêm, {{khachsan.phong_set.first.soluongnguoi}} người</h6>
+                  <h3>{{khachsan.phong_set.first.giaphong_vnd}} VND</h3>
+                  <button class='btn_trong'>Xem chỗ trống > </button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

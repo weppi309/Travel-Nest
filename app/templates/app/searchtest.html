@@ -1,0 +1,24 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+{% include "app/blocktimkiem.html" %}
+
+<div class='l'>
+    <a class='t-link' href="{% url 'home'%}">Trang chủ </a>
+    
+    {% if tentinh %}
+        <span> > </span>
+        <a class='t-link' href="{% url 'search' %}?tinh_id={{ tinh_id }}&tinh_name={{ tinh_name }}">{{ tentinh.tentinh }}</a>
+    {% else %}
+        <span> > </span>
+        <a class='t-link' href="{% url 'search' %}?tinh={{ search }}">{{ search }}</a>
+    {% endif %}
+    <span> > </span>
+    <a>Kết quả tìm kiếm</a>
+</div>
+
+<div class='le' id="search-results">
+    {% include 'app/search_form.html' %}
+    {% include 'app/search_results.html' %}
+</div>
+{% endblock content %}

@@ -1,9 +1,9 @@
 <div class='le'>
-  <form class='row box-element' method="POST" action="{% url 'search'%}"  id='homeForm'>
-    {% csrf_token %}
+  <form class='row box-element' method="get" action="{% url 'search'%}"  id='homeForm'>
     <div class='col-md-3'>
-      <input type="text" name="tinh" class="form-control g1" id="search_tinh_id" placeholder="Bạn muốn đến đâu?">
+      <input type="text" name="tinh" class="form-control g1" id="search_tinh_id" placeholder="Bạn muốn đến đâu?" value="{{ search }}">
     </div>
+    <input type="hidden" name="tinh_id" value="{{ tinh_id }}">
     <div class=' col-md-3'>
       <div class='g2'>
         <label for="check-in">Ngày nhận phòng:</label>
@@ -68,7 +68,7 @@
       </div>
     </div>
     <div class='col-md-1'>
-      <input class='g3 search 'id="timkiem" type="submit" value="Tìm">
+      <input class='g3 search'id="timkiem" type="submit" value="Tìm">
     </div>
   </form>
 </div>
