@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import timedelta
 from django import forms
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -136,6 +138,8 @@ class DichVu(ModelBase):
 class HoaDon(ModelBase):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
     thanh_toan = models.ForeignKey('Payment_VNPay', on_delete=models.SET_NULL, null=True, blank=True)
+    payment_method = models.CharField(max_length=50, choices=[('bank', 'Bank'), ('on_arrival', 'On Arrival')], default='on_arrival')
+    payment_status = models.BooleanField(default=False)
     CHUA_THANH_TOAN = 'CTT'
     DA_NHAN_PHONG = 'DNP'
     DA_HUY = 'DH'
@@ -151,15 +155,31 @@ class HoaDon(ModelBase):
         choices=TRANGTHAI_CHOICES,
         default=CHUA_THANH_TOAN,
     )
+    def __str__(self):
+        return f"Hóa đơn {self.id} - {'Đã thanh toán' if self.payment_status else 'Chưa thanh toán'}"
     class Meta:
         verbose_name_plural = 'Quản lý hóa đơn'
+    def huy_don_hang(self):
+        if self.payment_status:
+            raise forms.ValidationError("Đơn hàng đã thanh toán, không thể hủy.")
+        
+        chi_tiet_hoa_don = ChiTietHoaDon.objects.filter(hoadon=self)
+        for chi_tiet in chi_tiet_hoa_don:
+            if chi_tiet.ngay_gio_nhan <= timezone.now() + timedelta(days=1):
+                raise forms.ValidationError("Không thể hủy đơn hàng vì đã quá thời gian nhận phòng.")
+        
+        chi_tiet_hoa_don.update(active=False)
+        self.active = False
+        self.save()
 class ChiTietHoaDon(ModelBase):
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True)
     hoadon = models.ForeignKey(HoaDon,on_delete=models.SET_NULL,blank=True,null=True)
     ngay_gio_nhan = models.DateTimeField()
     ngay_gio_tra = models.DateTimeField()
-    soluong = models.IntegerField()
+    soluong_phong = models.IntegerField()
+    soluong_dem = models.IntegerField()
     dongia = models.FloatField()
+    tongtien = models.FloatField()
     class Meta:
         verbose_name_plural = 'Quản lý chi tiết hóa đơn'
 class Danhgia(ModelBase):

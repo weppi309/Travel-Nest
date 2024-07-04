@@ -19,12 +19,6 @@
     </div>
     <form method="POST" action="{% url 'home'%}">
         {% csrf_token %}
-        <input type="hidden" id="user" name="user" value="">
-        <input type="hidden" id="ngay_nhan" name="ngay_nhan" value="">
-        <input type="hidden" id="ngay_tra" name="ngay_tra" value="">
-        <input type="hidden" id="so_luong_dem" name="so_luong_dem" value="">
-        <input type="hidden" id="phong_id" name="phong_id" value="">
-        <input type="hidden" id="dongia" name="dongia" value="">
         <button type="submit" >Trang chủ</button>
     </form>
     <script>
@@ -40,21 +34,5 @@
             }
             return null;
         }
-
-        // Lấy giá trị từ cookie
-        var totalPrice = getCookie('totalPrice');
-        var user = getCookie('user');
-        var phong_id = getCookie('phong_id');
-        var ngay_gio_nhan = getCookie('ngay_gio_nhan');
-        var ngay_gio_tra = getCookie('ngay_gio_tra');
-        var soluong = getCookie('soluong');
-
-        // Sử dụng các giá trị lấy từ cookie để đặt phòng mới
-        console.log('Total Price:', totalPrice);
-        console.log('User:', user);
-        console.log('Phong ID:', phong_id);
-        console.log('Ngay gio nhan:', ngay_gio_nhan);
-        console.log('Ngay gio tra:', ngay_gio_tra);
-        console.log('So luong:', soluong);
     </script>
 {% endblock %}

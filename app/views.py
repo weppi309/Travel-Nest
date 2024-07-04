@@ -1,4 +1,5 @@
 import json
+from django.forms import ValidationError
 from django.shortcuts import render
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate,login,logout
@@ -54,11 +55,7 @@ def logoutPage(request):
 def home(request):
     tinhs = Tinh.objects.all()
     tinh_data = Tinh.objects.annotate(num_hotels=Count('khachsan'))
-    # Lấy hai hàng đầu hiển thị 2 ảnh
     top_2_tinhs = Tinh.objects.all()[:2]
-    # Lấy hàng thứ hai hiển thị 3 ảnh kèm tên
-    # second_tinh = Tinh.objects.all()[2]
-    # top_3_tinhs = Tinh.objects.filter(id__gte=second_tinh.id)[:3]
     try:
         second_tinh = Tinh.objects.all()[2]
         top_3_tinhs = Tinh.objects.filter(id__gte=second_tinh.id)[:3]
@@ -68,26 +65,6 @@ def home(request):
 
     context={'tinh_data': tinh_data, 'tinhs':tinhs,'top_2_tinhs':top_2_tinhs,'top_3_tinhs':top_3_tinhs} 
     return render(request,'app/home.html',context)
-# def search(request):
-#     if request.method=="POST":
-#         search= request.POST.get('tinh')
-#         tinh= Tinh.objects.filter(tentinh=search).first() # ten tinh
-#         if search !='':
-#             khachsans= KhachSan.objects.filter(tinh_id=tinh)
-#         else:
-#             khachsans=KhachSan.objects.all()
-#     context={'khachsans':khachsans,'search':search,'tinh':tinh,'search':search}
-#     return render(request,'app/search.html',context)
-# def ds(request): #view danh sách khách sạn theo tỉnh
-#     tinh_id = request.GET.get('tinh_id')
-#     tinh_name = request.GET.get('tinh_name')
-#    # Kiểm tra xem có tinh_id nào được truyền không
-#     if tinh_id is not None:
-#         khachsans = KhachSan.objects.filter(tinh_id=tinh_id)
-#     else:
-#         khachsans = KhachSan.objects.all()
-#     context={'khachsans':khachsans, 'tinh_id':tinh_id,'tinh_name':tinh_name}
-#     return render(request,'app/listkhachsan.html',context)
 def search(request):
     if request.method=="POST":
         search= request.POST.get('tinh')
@@ -134,20 +111,63 @@ def ks(request):
     return render(request, 'app/khachsan.html', context)
 def dondatphong(request):
     if request.user.is_authenticated:
-        customer = request.user
-        hoadons= HoaDon.objects.filter(user=customer)
         if request.method == 'POST':
-            diem = request.POST.get("exampleRadios")
-            binhluan = request.POST.get("binhluan")
-            phong_id = request.POST.get("phong_id")  # Lấy phong_id từ biểu mẫu đánh giá
-            # hoadon = HoaDon.objects.get(chitiethoadon__phong_id=phong_id, user=customer)  # Lấy hóa đơn dựa trên phong_id
-            # danhgia = Danhgia.objects.create(user=customer, phong=hoadon.chitiethoadon_set.get(phong_id=phong_id).phong, diem=diem, binhluan=binhluan)
-            return redirect('dondatphong')  # Chuyển hướng trở lại trang danh sách hóa đơn sau khi đánh giá
+            if 'huyphong' in request.POST:
+                hoadon_id = request.POST.get('hoadon_id')
+                
+                phong_id = request.POST.get('phong_id')
+                print(f"HoaDon ID: {hoadon_id}, Phong ID: {phong_id}")  # Log để kiểm tra giá trị nhận được
+
+                try:
+                    hoadon = HoaDon.objects.get(id=hoadon_id)
+                    phong = Phong.objects.get(id=phong_id)
+                    chitiethoadon = hoadon.chitiethoadon_set.get(phong_id=phong_id)
+
+                    if chitiethoadon.ngay_gio_nhan > timezone.now() + timezone.timedelta(days=1):
+                        hoadon.huy_don_hang()
+                        phong.soluong += chitiethoadon.soluong_phong
+                        phong.save()
+                        messages.success(request, 'Đã hủy phòng thành công.')
+                    else:
+                        messages.error(request, 'Không thể hủy phòng trong vòng 1 ngày trước khi nhận phòng.')
+
+                except HoaDon.DoesNotExist:
+                    messages.error(request, 'Hóa đơn không tồn tại.')
+
+                except ChiTietHoaDon.DoesNotExist:
+                    messages.error(request, 'Chi tiết hóa đơn không tồn tại.')
+
+                except ValidationError as e:
+                    messages.error(request, str(e))
+
+                return redirect('dondatphong')
+
+            if 'danhgia' in request.POST:
+                diem = request.POST.get("exampleRadios")
+                binhluan = request.POST.get("binhluan")
+                hoadon_id = request.POST.get("hoadon_id")
+                hoadon = HoaDon.objects.get(id=hoadon_id)
+                print("Hóa đơn ID:", hoadon_id)
+                # Kiểm tra xem hóa đơn đã được đánh giá chưa
+                if Danhgia.objects.filter(hoadon=hoadon).exists():
+                    messages.error(request, 'Hóa đơn này đã được đánh giá trước đó.')
+                else:
+                    # Tạo đối tượng đánh giá mới và lưu vào cơ sở dữ liệu
+                    Danhgia.objects.create(
+                        hoadon=hoadon,
+                        diem=diem,
+                        binhluan=binhluan
+                    )
+                    messages.success(request, 'Đánh giá của bạn đã được lưu.')
+                return redirect('dondatphong')
+
+        customer = request.user
+        hoadons = HoaDon.objects.filter(user=customer)
     else:
-        hoadon =[]
-        
-    context ={'hoadons':hoadons}
-    return render(request,'app/dondatphong.html', context)
+        hoadons = []
+
+    context = {'hoadons': hoadons}
+    return render(request, 'app/dondatphong.html', context)
 
 
 @login_required
@@ -168,6 +188,9 @@ def datphong(request):
         ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
         so_dem = (ngay_gio_tra_str - ngay_gio_nhan_str).days
         total = so_dem * dongia * quantity_float
+        diemtb_danhgia = phong.khachsan.diem_trung_binh    
+        tendiem_tb= phong.khachsan.get_danh_gia_tb
+        tong_danhgia=phong.khachsan.sum_danh_gia
         context = {
             'phong_id': phong_id,
             'ten_tinh': ten_tinh,
@@ -180,6 +203,9 @@ def datphong(request):
             'total': total,
             'tenphong': tenphong,
             'dongia': dongia,
+            'diemtb_danhgia':diemtb_danhgia,
+            'tendiem_tb':tendiem_tb,
+            'tong_danhgia':tong_danhgia
         }
         return render(request, 'app/datphong.html', context)
     
@@ -188,8 +214,15 @@ def datphong(request):
         ngay_tra = request.POST.get("ngay_tra")
         so_luong_dem = request.POST.get("so_luong_dem")
         phong_id = request.POST.get("phong_id")
-        slphong = request.POST.get("slphong")
+        payment_method = request.POST.get("payment_method")
         
+        slphong = request.POST.get("slphong")
+        # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
+        phong = Phong.objects.get(id=phong_id)
+        don_gia = phong.giaphong
+        total = so_luong_dem * don_gia * slphong
+        customer = request.user
+        payment_status = True if payment_method == 'bank' else False
         if slphong:
             slphong = int(slphong)
         
@@ -200,19 +233,14 @@ def datphong(request):
             
             if phong.soluong >= slphong:
                 phong.soluong -= slphong
-                if phong.soluong == 0:
+                if phong.soluong > 0:
+                    phong.active = True
+                elif phong.soluong == 0:
                     phong.active = False
                 phong.save()
                 
-                hoadon = HoaDon.objects.create(user=customer)
-                ChiTietHoaDon.objects.create(
-                    phong=phong,
-                    hoadon=hoadon,
-                    ngay_gio_nhan=ngay_nhan,
-                    ngay_gio_tra=ngay_tra,
-                    soluong=slphong,
-                    dongia=don_gia
-                )
+                hoadon = HoaDon.objects.create(user=customer,payment_method=payment_method, payment_status=payment_status)
+                chitiethoadon = ChiTietHoaDon.objects.create(phong=phong,hoadon=hoadon,ngay_gio_nhan=ngay_nhan,ngay_gio_tra=ngay_tra,soluong_dem=so_luong_dem,soluong_phong=slphong,dongia=don_gia,tongtien=total)
                 
         return redirect('dondatphong')
     
@@ -475,7 +503,11 @@ def payment_return(request):
         phong_id = request.COOKIES.get('phong_id')
         ngay_gio_nhan = request.COOKIES.get('ngay_gio_nhan')
         ngay_gio_tra = request.COOKIES.get('ngay_gio_tra')
-        soluong = request.COOKIES.get('soluong')
+        soluong_dem = request.COOKIES.get('soluong_dem')
+        soluong_phong = request.COOKIES.get('soluong_phong')
+        payment_method = request.COOKIES.get('payment_method')
+        giaphong = request.COOKIES.get('giaphong')
+
 
         # cutomer = request.user
         payment = Payment_VNPay.objects.create(
@@ -485,24 +517,39 @@ def payment_return(request):
             vnp_TransactionNo = vnp_TransactionNo,
             vnp_ResponseCode = vnp_ResponseCode
         )
-
-        # Tạo đối tượng HoaDon
-        hoa_don = HoaDon.objects.create(
-            id=payment.order_id,
-            user=cutomer,# Giả sử user là một ID, cập nhật nếu cần thi
-            # thanhtoan= payment.id
-        )
-
-        # Tạo đối tượng ChiTietHoaDon
-        chi_tiet_hoa_don = ChiTietHoaDon.objects.create(
-            hoadon=hoa_don,
-            phong_id=phong_id,
-            ngay_gio_nhan =ngay_gio_nhan ,
-            ngay_gio_tra =ngay_gio_tra,
+        if soluong_phong:
+                soluong_phong = int(soluong_phong)
+        if soluong_phong is not None:
+            phong = Phong.objects.get(id=phong_id)
             
-            soluong=soluong,
-            dongia=amount
-        )
+            if phong.soluong >= soluong_phong:
+                phong.soluong -= soluong_phong
+                if phong.soluong > 0:
+                    phong.active = True
+                elif phong.soluong == 0:
+                    phong.active = False
+                phong.save()
+                # Tạo đơn đặt phòng 
+                payment_status = True if payment_method == 'bank' else False
+                hoa_don = HoaDon.objects.create(
+                    id=payment.order_id,
+                    user=cutomer,
+                    payment_method=payment_method, 
+                    payment_status=payment_status# Giả sử user là một ID, cập nhật nếu cần thi
+                    # thanhtoan= payment.id
+                )
+
+                # Tạo đối tượng ChiTietHoaDon
+                chi_tiet_hoa_don = ChiTietHoaDon.objects.create(
+                    hoadon=hoa_don,
+                    phong_id=phong_id,
+                    ngay_gio_nhan =ngay_gio_nhan ,
+                    ngay_gio_tra =ngay_gio_tra,
+                    soluong_dem=soluong_dem,
+                    soluong_phong=soluong_phong,
+                    tongtien=amount,
+                    dongia = giaphong,
+                )
 
         if vnp.validate_response(settings.VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":
