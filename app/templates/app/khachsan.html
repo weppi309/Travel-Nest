@@ -1,5 +1,7 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load l10n %}
+
 {% comment %} {% load humanize %} {% endcomment %}
 {% block content %}
 <div class='brm1'>
@@ -100,27 +102,28 @@
   
       <!--anh-->
       <div>
-        <div class='bacot'>
-          
-          {% comment %} <div>
-            <a><img class='anhlon' src="{{anh.anhks.url}}"></img></a>
-          </div> {% endcomment %}
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
+        <div class="boxtt">
+          <div id="carouselExample{{ forloop.counter }}" class="carousel slide">
+              <div class="carousel-inner">
+                  {% for anh in listanhks %}
+                      {% if forloop.first %}
+                          <div class="carousel-item active">
+                      {% else %}
+                          <div class="carousel-item">
+                      {% endif %}
+                      <img src="{{ anh.anhks.url}}" class="card-img-top" height="450px" style="margin-top:15px">
+                  </div>
+                  {% endfor %}
+              </div> 
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"></span>
+                  <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+              </button>
           </div>
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
-          </div>
-          
-          
         </div>
         
       </div>
@@ -133,12 +136,7 @@
             
           </div>
           <div class="col hover-element">
-            <a class='sn' href='#tiennghi'>Tiện nghi</a>
-            
-
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#phi'>Thông tin và giá</a>
+            <a class='sn' href='#phi'>Thông tin và phí </a>
             
           </div>
           <div class="col hover-element">
@@ -165,7 +163,7 @@
         <a href="{% url 'ks'%}" ><h6>Xem tất cả nhận xét ></h6></a>
         <h5><strong>Dịch vụ nổi bật</strong></h5>
         <div class='row row-cols-2'>
-          {% for tn in tiennghis %}
+          {% for dv in listdichvu %}
           <div class='col'>
             <h6 style="border: 2px solid #ddd; border-radius: 10px; text-align: center; height:40px; padding-top: 10px;"><i>* {{dv.tendichvu}}</i></h6>
           </div>
@@ -237,7 +235,15 @@
                     </div>
                   </th>
                   <td>{{phong.soluongnguoi}} người</td>
-                  <td class ="giaphong">{{phong.giaphong}}</td>
+                  <td class ="giaphong">
+                    {% if phong.khuyenmai.exists %}
+                        <p style="text-decoration: line-through;color: red;">{{ phong.giaphong_vnd }} VND</p>
+                        <h6 style ="color: blue;">Phòng được khuyến mãi!</h6>
+                        <p >{{ phong.get_discounted_price}} VND</p>
+                    {% else %}
+                        <p>{{ phong.giaphong_vnd }} VND</p>
+                    {% endif %}
+                  </td>
                   <td>
                     <div class="dropdown" id="dropdown-container-{{ phong.id }}">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -262,27 +268,6 @@
         </div>
     </div>
         
-    <!-- thông tin tiện nghi-->
-    <div class='row boxm1'>
-      <div class='col'>
-        <h2 id='tiennghi'>Tiện nghi dịch vụ nơi lưu trú</h2>
-      </div>
-      <div class='col'>
-        <div class='row row-cols-2'>
-          {% for tn in tiennghis  %}
-          <div class='col'>
-            <div>
-              <h6><strong>
-                {{tn.tiennghi.tentiennghi}}
-              </strong><h6>
-                <h6>{{tn.tiennghi.mota_tiennghi}}</h6>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-    </div>
 
     <!--chính sách-->
     <div class='row boxm1'>
