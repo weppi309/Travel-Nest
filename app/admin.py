@@ -412,7 +412,7 @@ admin_site.register(DichVu,DichVuAdmin)
 admin_site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)
 admin.site.register(Danhgia,DanhGiaAdmin)
-admin.site.register(KhuyenMai,KhuyenMaiAdmin)
+admin_site.register(KhuyenMai,KhuyenMaiAdmin)
 
 # from django.db.models import Count
 # from django.shortcuts import render

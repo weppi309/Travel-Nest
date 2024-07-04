@@ -2,31 +2,87 @@
 {% load static %}
 {% block content %}
 <div class='l '>
-    <a href="#" onclick="goBack();"><img class='icon-back' src='{% static 'app/images/icon/back.png' %}'></img></a>
+    <a href="#" onclick="goBack();"><img class='icon-back' src='{% static 'app/images/icon/back.png' %}'></a>
+    <h1 style ="text-align: center; font-family: 'Arial', sans-serif; font-size:50px; color: #26355D;"><i><strong><u>Những phòng bạn đã đặt tại TravelNest</u></strong><i></h1>
+
     {% for hoadon in hoadons %}
-        <div class='top1'>
-            <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
-            <p>Ngày đặt: {{ hoadon.created_date }}</p>
-            <!-- Thêm các thông tin khác của hóa đơn ở đây -->
-            {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
-            <ul>
-                <li>{{chitiethoadon.hoadon}}</li>
-                <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
-                <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
-                <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
-                <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
-                <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
-                {% comment %} <li>Tổng tiền: {{ chitiethoadon.total|floatformat:2|intcomma}}</li>   {% endcomment %}
-            </ul>
-            <div class="d-flex justify-content-left">
-                <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
-                    Đánh giá
-                </button>
-                
+        <div class='top1' style="margin-top:100px; margin-left:10px; border: 2px solid #ccc; border-radius:10px; margin-bottom:-50px; background:#fff">
+            <div class="row">
+                <div class="col-6" style="margin-left:30px">
+                    <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
+                    <p>Ngày đặt: {{ hoadon.created_date }}</p>
+                    {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
+                    <ul>
+                        <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
+                        <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
+                        <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
+                        <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
+                        <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
+                        <li>Số lượng phòng đã đặt: {{ chitiethoadon.soluong_phong}}</li>
+                        <li>Tổng tiền: {{ chitiethoadon.tongtien }} VND</li>
+                    </ul>
+                </div>
+                <div class="col" style=" margin-top:80px">
+                    <div >
+                        {% if hoadon.danhgia %}
+                            <button type="button" class="btn btn-light btn-lg me-2 danhgia" style="background: #6DC5D1; color: black" disabled>Đã đánh giá</button>
+                        {% else %}
+                            <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{ chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
+                                Đánh giá
+                            </button>
+                            <br>
+                        {% endif %}
+                        
+                        {% if not hoadon.payment_status %}
+                            {% if hoadon.active %}
+                                <button type="button" class="btn btn-primary btn btn-light btn-lg me-2 huyphong" style="margin-top:30px; margin-left:250px" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-hoadon-id="{{ hoadon.id }}" data-phong-id="{{ chitiethoadon.phong.id }}">
+                                    Hủy phòng
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-light btn-lg me-2 huyphong"  style="background: red; color: black; margin-top:30px; margin-left:250px" disabled>
+                                    Đã hủy phòng
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black; margin-top:30px; margin-left:250px" disabled>
+                                Đã thanh toán
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% endfor %} 
+                </div>
             </div>
-            {% endfor %} 
+            
+            
+
+        </div>
+
+        <!-- Modal for cancel -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">TravelNest.com</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                Bạn chắc chắn muốn hủy phòng đúng không :<
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <form method="POST" action="{% url 'dondatphong' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="hoadon_id" id="modal-hoadon-id">
+                    <input type="hidden" name="phong_id" id="modal-phong-id">
+                    <button type="submit" name="huyphong" class="btn btn-danger">Hủy phòng</button>
+                </form>
+                </div>
+            </div>
+            </div>
         </div>
     {% endfor %}
+    
+    <!-- Modal for review -->
     <form method='POST' action="">
         {% csrf_token %}
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -43,28 +99,28 @@
                         <h3>Mức điểm:</h3>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="10" checked>
-                            <label class="form-check-label" for="exampleRadios1" >
+                            <label class="form-check-label" for="exampleRadios1">
                             10
                             </label>
                             <label> (Tuyệt vời)</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="8">
-                            <label class="form-check-label" for="exampleRadios2" >
+                            <label class="form-check-label" for="exampleRadios2">
                             8
                             </label>
                             <label>(Tốt)</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="7">
-                            <label class="form-check-label" for="exampleRadios3" >
+                            <label class="form-check-label" for="exampleRadios3">
                             7
                             </label>
                             <label>(Tạm ổn)</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios4" value="5">
-                            <label class="form-check-label" for="exampleRadios4" >
+                            <label class="form-check-label" for="exampleRadios4">
                             5
                             </label>
                             <label>(Không tốt)</label>
@@ -74,26 +130,37 @@
                         <h3>Bình luận:</h3>
                         <textarea class="form-control" name='binhluan' id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
-    
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <input type="submit"  class="btn btn-primary" value="Lưu đánh giá">
+                <input type="submit" name="danhgia" class="btn btn-primary" value="Lưu đánh giá">
                 </div>
             </div>
             </div>
         </div>
     </form>
-
-</div> 
-<br></br></br></br></br></br></br>
+</div>
+<br></br>
+<br></br>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var danhgiaButtons = document.querySelectorAll('.danhgia');
         danhgiaButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 var hoadonId = this.getAttribute('data-hoadon-id');
+                var phongId = this.getAttribute('data-phong-id');
                 document.getElementById('hoadon_id').value = hoadonId;
+                document.getElementById('phong_id').value = phongId;
+            });
+        });
+
+        var huyPhongButtons = document.querySelectorAll('.huyphong');
+        huyPhongButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var hoadonId = this.getAttribute('data-hoadon-id');
+                var phongId = this.getAttribute('data-phong-id');
+                document.getElementById('modal-hoadon-id').value = hoadonId;
+                document.getElementById('modal-phong-id').value = phongId;
             });
         });
     });
