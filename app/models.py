@@ -108,13 +108,17 @@ class Phong(ModelBase):
         verbose_name_plural = 'Quản lý phòng'
     def __str__(self):
         return self.tenphong
+    @property
+    def giaphong_vnd(self):
+        return "{:,.0f}".format(self.giaphong)
+    
     def get_discounted_price(self):
         current_time = timezone.now()
         discounted_price = self.giaphong
         for promotion in self.khuyenmai.all():
             if promotion.thoigian_bd <= current_time <= promotion.thoigian_kt:
                 discounted_price -= promotion.giatri_km
-        return discounted_price
+        return "{:,.0f}".format(discounted_price) 
 class AnhPhong(ModelBase):
     anhphong = models.ImageField(upload_to='anhphong/%Y/%m',null=True,blank=True)
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True )
@@ -190,6 +194,9 @@ class ChiTietHoaDon(ModelBase):
     tongtien = models.FloatField()
     class Meta:
         verbose_name_plural = 'Quản lý chi tiết hóa đơn'
+    @property
+    def tongtien_vnd(self):
+        return "{:,.0f}".format(self.tongtien)
 class Danhgia(ModelBase):
     hoadon = models.OneToOneField(HoaDon,on_delete=models.CASCADE,blank=True,null=True)
     diem = models.IntegerField()

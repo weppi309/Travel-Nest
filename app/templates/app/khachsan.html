@@ -1,5 +1,7 @@
 {% extends "app/base.html" %}
 {% load static %}
+{% load l10n %}
+
 {% comment %} {% load humanize %} {% endcomment %}
 {% block content %}
 <div class='brm1'>
@@ -235,11 +237,11 @@
                   <td>{{phong.soluongnguoi}} người</td>
                   <td class ="giaphong">
                     {% if phong.khuyenmai.exists %}
-                        <p style="text-decoration: line-through;color: red;">{{ phong.giaphong }} VND</p>
+                        <p style="text-decoration: line-through;color: red;">{{ phong.giaphong_vnd }} VND</p>
                         <h6 style ="color: blue;">Phòng được khuyến mãi!</h6>
-                        <p >{{phong.get_discounted_price}} VND</p>
+                        <p >{{ phong.get_discounted_price}} VND</p>
                     {% else %}
-                        <p>{{ phong.giaphong }} VND</p>
+                        <p>{{ phong.giaphong_vnd }} VND</p>
                     {% endif %}
                   </td>
                   <td>

@@ -248,7 +248,7 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
 }
-
+USE_L10N = True
 #payment
 VNPAY_RETURN_URL = 'http://localhost:8000/payment_return'
 # VNPAY_RETURN_URL = 'https://web-production-7fc2.up.railway.app/payment_return'

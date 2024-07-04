@@ -183,10 +183,12 @@ def datphong(request):
         ten_ks = phong.khachsan.tenkhachsan
         ten_tinh = phong.khachsan.tinh.tentinh
         tenphong = phong.tenphong
-        giagoc = phong.giaphong
+        giagoc = phong.giaphong_vnd
         if phong.khuyenmai.exists:
             
-            dongia = phong.get_discounted_price()
+            giakm= phong.get_discounted_price()
+            gia=giakm.replace(",", "")
+            dongia=float(gia)
         else:
             dongia = phong.giaphong
         anh_phong = AnhPhong.objects.filter(phong=phong)
@@ -194,10 +196,12 @@ def datphong(request):
         ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
         so_dem = (ngay_gio_tra_str - ngay_gio_nhan_str).days
         total = so_dem * dongia * quantity_float
+        formatted_total = "{:,.0f}".format(total) 
         diemtb_danhgia = phong.khachsan.diem_trung_binh    
         tendiem_tb= phong.khachsan.get_danh_gia_tb
         tong_danhgia=phong.khachsan.sum_danh_gia
         context = {
+            'formatted_total':formatted_total,
             'giagoc':giagoc,
             'khuyenmai_list':khuyenmai_list,
             'phong_id': phong_id,
