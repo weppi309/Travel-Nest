@@ -96,12 +96,15 @@ WSGI_APPLICATION = 'travelnest.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': '12345678',
+        'PORT': '',
+    }
+}
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -110,22 +113,22 @@ import environ
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'railway',
-        # 'USER': 'root',
-        # 'PASSWORD': 'YHSGYkCQnVmkMxhETGoFxmuwRFXjOyMe',
-        # 'HOST': 'roundhouse.proxy.rlwy.net',
-        # 'PORT': '23145',
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('MYSQLDATABASE'),
-        'USER': env('MYSQLUSER'),
-        'PASSWORD': env('MYSQLPASSWORD'),
-        'HOST': env('MYSQLHOST'),
-        'PORT': env('MYSQLPORT'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.db.backends.mysql',
+#         # 'NAME': 'railway',
+#         # 'USER': 'root',
+#         # 'PASSWORD': 'YHSGYkCQnVmkMxhETGoFxmuwRFXjOyMe',
+#         # 'HOST': 'roundhouse.proxy.rlwy.net',
+#         # 'PORT': '23145',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': env('MYSQLDATABASE'),
+#         'USER': env('MYSQLUSER'),
+#         'PASSWORD': env('MYSQLPASSWORD'),
+#         'HOST': env('MYSQLHOST'),
+#         'PORT': env('MYSQLPORT'),
+#     }
+# }
 
 
 # Password validation

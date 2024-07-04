@@ -133,12 +133,7 @@
             
           </div>
           <div class="col hover-element">
-            <a class='sn' href='#tiennghi'>Tiện nghi</a>
-            
-
-          </div>
-          <div class="col hover-element">
-            <a class='sn' href='#phi'>Thông tin và giá</a>
+            <a class='sn' href='#phi'>Thông tin và phí </a>
             
           </div>
           <div class="col hover-element">
@@ -165,7 +160,7 @@
         <a href="{% url 'ks'%}" ><h6>Xem tất cả nhận xét ></h6></a>
         <h5><strong>Dịch vụ nổi bật</strong></h5>
         <div class='row row-cols-2'>
-          {% for tn in tiennghis %}
+          {% for dv in listdichvu %}
           <div class='col'>
             <h6 style="border: 2px solid #ddd; border-radius: 10px; text-align: center; height:40px; padding-top: 10px;"><i>* {{dv.tendichvu}}</i></h6>
           </div>
@@ -262,27 +257,6 @@
         </div>
     </div>
         
-    <!-- thông tin tiện nghi-->
-    <div class='row boxm1'>
-      <div class='col'>
-        <h2 id='tiennghi'>Tiện nghi dịch vụ nơi lưu trú</h2>
-      </div>
-      <div class='col'>
-        <div class='row row-cols-2'>
-          {% for tn in tiennghis  %}
-          <div class='col'>
-            <div>
-              <h6><strong>
-                {{tn.tiennghi.tentiennghi}}
-              </strong><h6>
-                <h6>{{tn.tiennghi.mota_tiennghi}}</h6>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-    </div>
 
     <!--chính sách-->
     <div class='row boxm1'>
