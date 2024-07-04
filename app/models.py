@@ -103,10 +103,18 @@ class Phong(ModelBase):
     soluong= models.IntegerField()
     khachsan = models.ForeignKey(KhachSan,on_delete=models.SET_NULL,blank=True,null=True)
     tiennghi = models.ManyToManyField('TienNghi',blank=True)
+    khuyenmai = models.ManyToManyField('KhuyenMai',blank=True)
     class Meta:
         verbose_name_plural = 'Quản lý phòng'
     def __str__(self):
         return self.tenphong
+    def get_discounted_price(self):
+        current_time = timezone.now()
+        discounted_price = self.giaphong
+        for promotion in self.khuyenmai.all():
+            if promotion.thoigian_bd <= current_time <= promotion.thoigian_kt:
+                discounted_price -= promotion.giatri_km
+        return discounted_price
 class AnhPhong(ModelBase):
     anhphong = models.ImageField(upload_to='anhphong/%Y/%m',null=True,blank=True)
     phong = models.ForeignKey(Phong,on_delete=models.SET_NULL,blank=True,null=True )
@@ -205,7 +213,6 @@ class KhuyenMai(ModelBase):
     thoigian_bd = models.DateTimeField()
     thoigian_kt = models.DateTimeField()
     giatri_km = models.FloatField()
-    phong = models.ManyToManyField(Phong, blank=True)
     class Meta:
         verbose_name_plural = 'Quản lý khuyến mãi'
 class Payment_VNPay(models.Model):

@@ -179,10 +179,16 @@ def datphong(request):
         ngay_gio_tra = request.GET.get("ngay_tra")
         phong_id = request.GET.get("phong_id")
         phong = Phong.objects.get(id=phong_id)
+        khuyenmai_list = phong.khuyenmai.all()
         ten_ks = phong.khachsan.tenkhachsan
         ten_tinh = phong.khachsan.tinh.tentinh
         tenphong = phong.tenphong
-        dongia = phong.giaphong
+        giagoc = phong.giaphong
+        if phong.khuyenmai.exists:
+            
+            dongia = phong.get_discounted_price()
+        else:
+            dongia = phong.giaphong
         anh_phong = AnhPhong.objects.filter(phong=phong)
         ngay_gio_nhan_str = datetime.strptime(ngay_gio_nhan, "%Y-%m-%dT%H:%M")
         ngay_gio_tra_str = datetime.strptime(ngay_gio_tra, "%Y-%m-%dT%H:%M")
@@ -192,6 +198,8 @@ def datphong(request):
         tendiem_tb= phong.khachsan.get_danh_gia_tb
         tong_danhgia=phong.khachsan.sum_danh_gia
         context = {
+            'giagoc':giagoc,
+            'khuyenmai_list':khuyenmai_list,
             'phong_id': phong_id,
             'ten_tinh': ten_tinh,
             'ngay_gio_nhan': ngay_gio_nhan,
@@ -215,12 +223,13 @@ def datphong(request):
         so_luong_dem = request.POST.get("so_luong_dem")
         phong_id = request.POST.get("phong_id")
         payment_method = request.POST.get("payment_method")
-        
+        sldem = float(so_luong_dem)
         slphong = request.POST.get("slphong")
         # Kiểm tra xem giá trị từ phiên đã tồn tại hay chưa
         phong = Phong.objects.get(id=phong_id)
         don_gia = phong.giaphong
-        total = so_luong_dem * don_gia * slphong
+        quantity_float = float(slphong)
+        total = sldem * don_gia * quantity_float
         customer = request.user
         payment_status = True if payment_method == 'bank' else False
         if slphong:

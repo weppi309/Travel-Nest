@@ -100,27 +100,28 @@
   
       <!--anh-->
       <div>
-        <div class='bacot'>
-          
-          {% comment %} <div>
-            <a><img class='anhlon' src="{{anh.anhks.url}}"></img></a>
-          </div> {% endcomment %}
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
+        <div class="boxtt">
+          <div id="carouselExample{{ forloop.counter }}" class="carousel slide">
+              <div class="carousel-inner">
+                  {% for anh in listanhks %}
+                      {% if forloop.first %}
+                          <div class="carousel-item active">
+                      {% else %}
+                          <div class="carousel-item">
+                      {% endif %}
+                      <img src="{{ anh.anhks.url}}" class="card-img-top" height="450px" style="margin-top:15px">
+                  </div>
+                  {% endfor %}
+              </div> 
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"></span>
+                  <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExample{{ forloop.counter }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+              </button>
           </div>
-          <div class='row'>
-            {% for anh in listanhks %}
-              <div >
-                <img class='anhnho' src="{{ anh.anhks.url }}">
-              </div>
-              {% endfor %}  
-          </div>
-          
-          
         </div>
         
       </div>
@@ -232,7 +233,15 @@
                     </div>
                   </th>
                   <td>{{phong.soluongnguoi}} người</td>
-                  <td class ="giaphong">{{phong.giaphong}}</td>
+                  <td class ="giaphong">
+                    {% if phong.khuyenmai.exists %}
+                        <p style="text-decoration: line-through;color: red;">{{ phong.giaphong }} VND</p>
+                        <h6 style ="color: blue;">Phòng được khuyến mãi!</h6>
+                        <p >{{phong.get_discounted_price}} VND</p>
+                    {% else %}
+                        <p>{{ phong.giaphong }} VND</p>
+                    {% endif %}
+                  </td>
                   <td>
                     <div class="dropdown" id="dropdown-container-{{ phong.id }}">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ phong.id }}" data-bs-toggle="dropdown" aria-expanded="false">

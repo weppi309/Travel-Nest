@@ -6,43 +6,55 @@
     <h1 style ="text-align: center; font-family: 'Arial', sans-serif; font-size:50px; color: #26355D;"><i><strong><u>Những phòng bạn đã đặt tại TravelNest</u></strong><i></h1>
 
     {% for hoadon in hoadons %}
-        <div class='top1'>
-            <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
-            <p>Ngày đặt: {{ hoadon.created_date }}</p>
-            {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
-            <ul>
-                <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
-                <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
-                <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
-                <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
-                <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
-            </ul>
-            <div class="d-flex justify-content-left">
-                {% if hoadon.danhgia %}
-                    <button type="button" class="btn btn-light btn-lg me-2 danhgia" style="background: #6DC5D1; color: black" disabled>Đã đánh giá</button>
-                {% else %}
-                    <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{ chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
-                        Đánh giá
-                    </button>
-                {% endif %}
-                
-                {% if not hoadon.payment_status %}
-                    {% if hoadon.active %}
-                        <button type="button" class="btn btn-primary btn btn-light btn-lg me-2 huyphong" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-hoadon-id="{{ hoadon.id }}" data-phong-id="{{ chitiethoadon.phong.id }}">
-                            Hủy phòng
-                        </button>
-                    {% else %}
-                        <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black" disabled>
-                            Đã hủy phòng
-                        </button>
-                    {% endif %}
-                {% else %}
-                    <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black" disabled>
-                        Đã thanh toán
-                    </button>
-                {% endif %}
+        <div class='top1' style="margin-top:100px; margin-left:10px; border: 2px solid #ccc; border-radius:10px; margin-bottom:-50px; background:#fff">
+            <div class="row">
+                <div class="col-6" style="margin-left:30px">
+                    <h4><strong>Mã số hóa đơn: {{ hoadon.id }}</strong></h4>
+                    <p>Ngày đặt: {{ hoadon.created_date }}</p>
+                    {% for chitiethoadon in hoadon.chitiethoadon_set.all %}
+                    <ul>
+                        <li>Khách sạn: {{ chitiethoadon.phong.khachsan.tenkhachsan }}</li>
+                        <li>Địa chỉ: {{ chitiethoadon.phong.khachsan.diachi }}</li>
+                        <li id= 'phong'>Phòng: {{ chitiethoadon.phong.tenphong }}</li>
+                        <li>Ngày nhận: {{ chitiethoadon.ngay_gio_nhan }}</li>
+                        <li>Ngày trả: {{ chitiethoadon.ngay_gio_tra }}</li>
+                        <li>Số lượng phòng đã đặt: {{ chitiethoadon.soluong_phong}}</li>
+                        <li>Tổng tiền: {{ chitiethoadon.tongtien }} VND</li>
+                    </ul>
+                </div>
+                <div class="col" style=" margin-top:80px">
+                    <div >
+                        {% if hoadon.danhgia %}
+                            <button type="button" class="btn btn-light btn-lg me-2 danhgia" style="background: #6DC5D1; color: black" disabled>Đã đánh giá</button>
+                        {% else %}
+                            <button type="button" class="btn btn-light btn-lg me-2 danhgia" data-bs-toggle="modal" data-bs-target="#exampleModal" data-phong="{{ chitiethoadon.phong.id }}" data-hoadon-id="{{ hoadon.id }}">
+                                Đánh giá
+                            </button>
+                            <br>
+                        {% endif %}
+                        
+                        {% if not hoadon.payment_status %}
+                            {% if hoadon.active %}
+                                <button type="button" class="btn btn-primary btn btn-light btn-lg me-2 huyphong" style="margin-top:30px; margin-left:250px" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-hoadon-id="{{ hoadon.id }}" data-phong-id="{{ chitiethoadon.phong.id }}">
+                                    Hủy phòng
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-light btn-lg me-2 huyphong"  style="background: red; color: black; margin-top:30px; margin-left:250px" disabled>
+                                    Đã hủy phòng
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <button type="button" class="btn btn-light btn-lg me-2 huyphong" style="background: #6DC5D1; color: black; margin-top:30px; margin-left:250px" disabled>
+                                Đã thanh toán
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% endfor %} 
+                </div>
             </div>
-            {% endfor %} 
+            
+            
+
         </div>
 
         <!-- Modal for cancel -->
@@ -128,6 +140,7 @@
         </div>
     </form>
 </div>
+<br></br>
 <br></br>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

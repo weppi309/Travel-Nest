@@ -82,8 +82,15 @@
                             <a>Ưu đãi</a>
                         </div>
                         <div class='col'>
-                            <a>{{dongia}} VND </a></br>
-                            <a>0.000 VND</a>
+                            <a>{{giagoc}} VND </a></br>
+                            {% if khuyenmai_list %}
+                                {% for km in khuyenmai_list %}
+                                    <a style="color:blue">{{ km.giatri_km }} VND</a>
+                                {% endfor %}
+                            {% else %}
+                                <p style="margin-left:60px">0 VND</p>
+                            {% endif %}
+                            
                         </div>
                     </div>
                     <div class='row'>
