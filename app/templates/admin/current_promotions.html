@@ -1,13 +1,50 @@
 {% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+<style>
+    /* Định dạng cho tiêu đề */
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Định dạng cho bảng */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    /* Định dạng cho phần đầu bảng */
+    table thead th {
+        background-color: #f2f2f2;
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Định dạng cho các dòng trong bảng */
+    table tbody tr {
+        border: 1px solid #ddd;
+    }
+
+    /* Định dạng cho các ô trong bảng */
+    table tbody td {
+        padding: 8px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Current Promotions</h1>
+<h1>Khuyến mãi hiện tại</h1>
 <table>
     <thead>
         <tr>
-            <th>Promotion</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Value</th>
+            <th>Khuyến mãi</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Giá trị</th>
         </tr>
     </thead>
     <tbody>

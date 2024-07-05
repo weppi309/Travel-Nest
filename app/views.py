@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Count, Q, Avg, F
+from django.db.models import Count, Q, Avg, F, Prefetch
 from django.shortcuts import redirect, render
 from datetime import datetime, timedelta, date
 from .models import *
@@ -57,7 +57,13 @@ def logoutPage(request):
     return redirect("dangnhap")
 def home(request):
     tinhs = Tinh.objects.all()
-    tinh_data = Tinh.objects.annotate(num_hotels=Count('khachsan'))
+    # tinh_data = Tinh.objects.annotate(
+    #     num_hotels=Count('khachsan', filter=Q(khachsan__active=True))
+    # )
+    active_hotels = KhachSan.objects.filter(active=True)
+    tinh_data = Tinh.objects.prefetch_related(Prefetch('khachsan_set', queryset=active_hotels)).annotate(
+        num_hotels=Count('khachsan', filter=Q(khachsan__active=True))
+    )
     # Lấy hai hàng đầu hiển thị 2 ảnh
     top_2_tinhs = Tinh.objects.all()[:2]
     # Lấy hàng thứ hai hiển thị 3 ảnh kèm tên
@@ -153,7 +159,7 @@ def search(request):
                 khachsan_list = khachsan_list.order_by('min_giaphong')
             elif sap_xep == 'giacao':
                 khachsan_list = khachsan_list.order_by('-min_giaphong')
-
+    num_hotels_found = khachsan_list.count()
     context = {
         'form': form,
         'khachsan_list': khachsan_list,
@@ -161,6 +167,7 @@ def search(request):
         'tentinh': tentinh,
         'tinh_id': tinh_id,
         'tinh_name': tinh_name,
+        'num_hotels_found': num_hotels_found,
     }
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
@@ -841,3 +848,7 @@ def current_promotions_view(request):
     promotions = KhuyenMai.objects.filter(thoigian_bd__lte=current_date, thoigian_kt__gte=current_date)
     context = {'promotions': promotions}
     return render(request, 'admin/current_promotions.html', context)
+@staff_member_required
+def admin_view(request):
+    role = request.user.role
+    return render(request, 'admin/custom_admin.html', {'role': role})

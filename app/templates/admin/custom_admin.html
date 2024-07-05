@@ -1,0 +1,27 @@
+{% comment %} {% if role == 'admin' %}
+    <!-- Hiển thị menu cho admin -->
+    <a href="{% url 'admin:user_role_stats' %}">User Role Stats</a>
+    <a href="{% url 'admin:hotel_by_tinh' %}">Hotel by Tinh</a>
+    <a href="{% url 'admin:room_by_hotel' %}">Room by Hotel</a>
+    <a href="{% url 'admin:invoice_by_month' %}">Invoice by Month</a>
+    <a href="{% url 'admin:revenue_by_month' %}">Revenue by Month</a>
+    <a href="{% url 'admin:current_promotions' %}">Current Promotions</a>
+{% elif role == 'provider' %}
+    <!-- Hiển thị menu cho provider -->
+    <a href="{% url 'admin:room_by_hotel' %}">Room by Hotel</a>
+    <a href="{% url 'admin:invoice_by_month' %}">Invoice by Month</a>
+    <a href="{% url 'admin:revenue_by_month' %}">Revenue by Month</a>
+{% elif role == 'user' %}
+    <!-- Hiển thị menu cho user -->
+    <a href="{% url 'admin:invoice_by_month' %}">Invoice by Month</a>
+{% endif %} {% endcomment %}
+{% load custom_tags %}
+
+{% if user|has_group:"admin" %}
+    <a href="{% url 'admin:user_role_stats' %}">User Role Stats</a>
+    <a href="{% url 'admin:hotel_by_tinh' %}">Hotel by Tinh</a>
+    <a href="{% url 'admin:room_by_hotel' %}">Room by Hotel</a>
+    <a href="{% url 'admin:invoice_by_month' %}">Invoice by Month</a>
+    <a href="{% url 'admin:revenue_by_month' %}">Revenue by Month</a>
+    <a href="{% url 'admin:current_promotions' %}">Current Promotions</a>
+{% endif %}

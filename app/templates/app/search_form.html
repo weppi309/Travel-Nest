@@ -1,4 +1,4 @@
-<style>
+{% comment %} <style>
     #search-form {
         display: flex;
         flex-wrap: wrap;
@@ -84,31 +84,82 @@
     <input type="hidden" name="tinh_name" value="{{ tinh_name }}">
     <input type="hidden" name="tinh" value="{{ search }}">
     <div class="field-container" style="flex: 1 1 100%;"></div>
-</form>
-{% comment %} <form id="search-form" method="get" action="{% url 'search' %}">
-    {{ form.tiennghi }}
-    {{ form.diem_danhgia }}
+</form> {% endcomment %}
+<style>
+    #search-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        max-width: 250px; /* Giới hạn chiều rộng của form */
+        margin-left: 0;
+    }
 
-    <!-- Khu vực -->
-    <div id="id_khu_vuc">
+    #search-form > div,
+    #search-form > .field-container {
+        display: flex;
+        flex-direction: column;
+        margin-left: 0px;
+    }
+
+    #search-form label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    #search-form input,
+    #search-form select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    #search-form input[type="submit"] {
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    #search-form input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    #search-form input[type="hidden"] {
+        display: none;
+    }
+</style>
+<form id="search-form" method="get" action="{% url 'search' %}">
+    <div class="field-container">
+        <label for="id_tiennghi">Tiện nghi:</label>
+        {{ form.tiennghi }}
+    </div>
+    <div class="field-container">
+        <label for="id_diem_danhgia">Điểm đánh giá:</label>
+        {{ form.diem_danhgia }}
+    </div>
+    <div class="field-container">
+        <label for="id_khu_vuc">Khu vực:</label>
         {{ form.khu_vuc }}
     </div>
-    <!-- Sắp xếp -->
-    <div id="id_sap_xep">
+    <div class="field-container">
+        <label for="id_sap_xep">Sắp xếp:</label>
         {{ form.sap_xep }}
     </div>
-    
-    <!-- Mức giá -->
-    <div id="id_gia_min">
+    <div class="field-container">
         <label for="id_gia_min">Giá tối thiểu:</label>
         {{ form.gia_min }}
     </div>
-    <div id="id_gia_max">
+    <div class="field-container">
         <label for="id_gia_max">Giá tối đa:</label>
         {{ form.gia_max }}
     </div>
-    <!-- Input ẩn để giữ lại giá trị tinh_id -->
     <input type="hidden" name="tinh_id" value="{{ tinh_id }}">
     <input type="hidden" name="tinh_name" value="{{ tinh_name }}">
     <input type="hidden" name="tinh" value="{{ search }}">
-</form> {% endcomment %}
+</form>

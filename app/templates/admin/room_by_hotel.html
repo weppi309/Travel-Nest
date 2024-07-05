@@ -1,11 +1,48 @@
 {% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+<style>
+    /* CSS inline cho tiêu đề */
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* CSS inline cho bảng */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    /* CSS inline cho phần đầu bảng */
+    table thead th {
+        background-color: #f2f2f2;
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* CSS inline cho các dòng trong bảng */
+    table tbody tr {
+        border: 1px solid #ddd;
+    }
+
+    /* CSS inline cho các ô trong bảng */
+    table tbody td {
+        padding: 8px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Rooms by Hotel</h1>
+<h1>Thống kê phòng theo khách sạn</h1>
 <table>
     <thead>
         <tr>
-            <th>Hotel</th>
-            <th>Count</th>
+            <th>Khách sạn</th>
+            <th>Số lượng phòng</th>
         </tr>
     </thead>
     <tbody>

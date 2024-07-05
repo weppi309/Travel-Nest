@@ -49,6 +49,27 @@ class RoleBasedAccessMiddleware:
         return response
 
 from django.utils.deprecation import MiddlewareMixin
+from django.conf import settings
+from django.contrib.auth.models import Group
+
+class JazzminSidebarMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if request.user.is_authenticated:
+            if request.user.groups.filter(name='Admin').exists():
+                # Định nghĩa sidebar cho admin
+                settings.JAZZMIN_SETTINGS["custom_links"] = {
+                    "app": [
+                        {"name": "User Role Stats", "url": "admin:user_role_stats", "icon": "fas fa-users"},
+                        {"name": "Hotel by Tinh", "url": "admin:hotel_by_tinh", "icon": "fas fa-hotel"},
+                        {"name": "Room by Hotel", "url": "admin:room_by_hotel", "icon": "fas fa-bed"},
+                        {"name": "Invoice by Month", "url": "admin:invoice_by_month", "icon": "fas fa-file-invoice"},
+                        {"name": "Revenue by Month", "url": "admin:revenue_by_month", "icon": "fas fa-dollar-sign"},
+                        {"name": "Current Promotions", "url": "admin:current_promotions", "icon": "fas fa-tags"},
+                    ]
+                }
+            else:
+                # Định nghĩa sidebar cho các vai trò khác
+                settings.JAZZMIN_SETTINGS["custom_links"] = {}
 
 # class NoCacheMiddleware(MiddlewareMixin):
 #     def process_response(self, request, response):

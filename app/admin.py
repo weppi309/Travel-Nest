@@ -12,16 +12,24 @@ class CustomAdminSite(admin.AdminSite):
 
     def get_urls(self):
         from django.urls import path
-        urls = super().get_urls()
+        from django.contrib.auth.decorators import user_passes_test
+        
+        # Custom decorator to check if user is an admin
+        def is_admin(user):
+            return user.is_superuser
+
+        # Define the URLs with the custom decorator
         custom_urls = [
-            path('user-role-stats/', self.admin_view(user_role_stats_view), name='user_role_stats'),
-            path('hotel-by-tinh/', self.admin_view(hotel_by_tinh_view), name='hotel_by_tinh'),
-            path('room-by-hotel/', self.admin_view(room_by_hotel_view), name='room_by_hotel'),
-            path('invoice-by-month/', self.admin_view(invoice_by_month_view), name='invoice_by_month'),
-            path('revenue-by-month/', self.admin_view(revenue_by_month_view), name='revenue_by_month'),
-            path('hotel-rating/', self.admin_view(hotel_rating_view), name='hotel_rating'),
-            path('current-promotions/', self.admin_view(current_promotions_view), name='current_promotions'),
+            path('user-role-stats/', self.admin_view(user_passes_test(is_admin)(user_role_stats_view)), name='user_role_stats'),
+            path('hotel-by-tinh/', self.admin_view(user_passes_test(is_admin)(hotel_by_tinh_view)), name='hotel_by_tinh'),
+            path('room-by-hotel/', self.admin_view(user_passes_test(is_admin)(room_by_hotel_view)), name='room_by_hotel'),
+            path('invoice-by-month/', self.admin_view(user_passes_test(is_admin)(invoice_by_month_view)), name='invoice_by_month'),
+            path('revenue-by-month/', self.admin_view(user_passes_test(is_admin)(revenue_by_month_view)), name='revenue_by_month'),
+            path('hotel-rating/', self.admin_view(user_passes_test(is_admin)(hotel_rating_view)), name='hotel_rating'),
+            path('current-promotions/', self.admin_view(user_passes_test(is_admin)(current_promotions_view)), name='current_promotions'),
         ]
+        # Add the custom URLs to the default admin URLs
+        urls = super().get_urls()
         return custom_urls + urls
 
 admin_site = CustomAdminSite(name='custom_admin')
@@ -187,20 +195,6 @@ class KhachSanAdmin(admin.ModelAdmin):
         else:
             form.base_fields['owner'].queryset = User.objects.filter(role='provider')
         return form
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == 'owner' and request.user.role == 'provider':
-    #         kwargs['initial'] = request.user.id  # Thiết lập owner mặc định là provider đang đăng nhập
-    #         kwargs['queryset'] = User.objects.filter(id=request.user.id)
-    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    # def get_form(self, request, obj=None, **kwargs):
-    #     form = super().get_form(request, obj, **kwargs)
-    #     if request.user.role == 'provider':
-    #         form.base_fields['owner'].queryset = User.objects.filter(id=request.user.id)
-    #         if obj is None:  # Khi thêm mới
-    #             form.base_fields['owner'].initial = request.user
-    #         form.base_fields['owner'].disabled = True
-    #     return form
 class TinhAdmin(admin.ModelAdmin):
     list_display=('id','tentinh','created_date','active')
     list_display_links = list_display
@@ -253,64 +247,6 @@ class DichVuAdmin(admin.ModelAdmin):
 class ChiTietHoaDonInline(admin.TabularInline):
     model = ChiTietHoaDon
     extra = 1
-# class HoaDonAdmin(admin.ModelAdmin):
-#     list_display=('id','user','created_date','active')
-#     inlines = [ChiTietHoaDonInline]
-#     def get_queryset(self, request):
-#         qs = super().get_queryset(request)
-#         if request.user.role == 'provider':
-#             # Lấy tất cả ChiTietHoaDon liên quan đến phong thuộc nhà cung cấp
-#             chi_tiet_hoa_don_ids = ChiTietHoaDon.objects.filter(phong__khachsan__owner=request.user).values_list('hoadon_id', flat=True)
-#             return qs.filter(id__in=chi_tiet_hoa_don_ids)
-#         return qs
-
-#     def has_change_permission(self, request, obj=None):
-#         if request.user.role == 'provider' and obj is not None:
-#             chi_tiet_hoa_dons = ChiTietHoaDon.objects.filter(hoadon=obj)
-#             if not chi_tiet_hoa_dons.filter(phong__khachsan__owner=request.user).exists():
-#                 return False
-#         return super().has_change_permission(request, obj)
-
-#     def has_delete_permission(self, request, obj=None):
-#         if request.user.role == 'provider' and obj is not None:
-#             chi_tiet_hoa_dons = ChiTietHoaDon.objects.filter(hoadon=obj)
-#             if not chi_tiet_hoa_dons.filter(phong__khachsan__owner=request.user).exists():
-#                 return False
-#         return super().has_delete_permission(request, obj)
-
-#     def has_add_permission(self, request):
-#         if request.user.role == 'provider':
-#             return True
-#         return super().has_add_permission(request)
-# class ChiTietHoaDonAdmin(admin.ModelAdmin):
-#     list_display=('id','hoadon','phong','created_date','active')
-#     def get_queryset(self, request):
-#         qs = super().get_queryset(request)
-#         if request.user.role == 'provider':
-#             # Filter ChiTietHoaDon objects by Phong's owner which is associated with the current user's HoaDon
-#             return qs.filter(phong__owner=request.user.hoadon_set.first().user)
-#         return qs
-
-#     def has_change_permission(self, request, obj=None):
-#         if request.user.role == 'provider' and obj is not None and obj.phong.owner != request.user.hoadon_set.first().user:
-#             return False
-#         return super().has_change_permission(request, obj)
-
-#     def has_delete_permission(self, request, obj=None):
-#         if request.user.role == 'provider' and obj is not None and obj.phong.owner != request.user.hoadon_set.first().user:
-#             return False
-#         return super().has_delete_permission(request, obj)
-
-#     def has_add_permission(self, request):
-#         if request.user.role == 'provider':
-#             return True
-#         return super().has_add_permission(request)
-
-#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-#         if db_field.name == 'phong':
-#             # Filter Phong objects by the owner associated with the current user's HoaDon
-#             kwargs['queryset'] = Phong.objects.filter(owner=request.user.hoadon_set.first().user)
-#         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 class HoaDonAdmin(admin.ModelAdmin):
     list_display=('id','user', 'trangthai', 'thanh_toan','created_date','active')
     inlines = [ChiTietHoaDonInline]
@@ -322,6 +258,8 @@ class HoaDonAdmin(admin.ModelAdmin):
         if request.user.role == 'provider':
             # Lọc các hóa đơn mà provider đó có quyền xem
             return qs.filter(chitiethoadon__phong__khachsan__owner=request.user)
+        if request.user.role == 'user':
+            return qs.filter(user=request.user)
         return qs
 
     def has_change_permission(self, request, obj=None):
@@ -329,6 +267,8 @@ class HoaDonAdmin(admin.ModelAdmin):
             chi_tiet_hoa_dons = obj.chitiethoadon_set.filter(phong__khachsan__owner=request.user)
             if not chi_tiet_hoa_dons.exists():
                 return False
+        if request.user.role == 'user' and obj is not None and obj.user != request.user:
+            return False
         return super().has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
@@ -336,6 +276,8 @@ class HoaDonAdmin(admin.ModelAdmin):
             chi_tiet_hoa_dons = obj.chitiethoadon_set.filter(phong__khachsan__owner=request.user)
             if not chi_tiet_hoa_dons.exists():
                 return False
+        if request.user.role == 'user' and obj is not None and obj.user != request.user:
+            return False
         return super().has_delete_permission(request, obj)
 
     def has_add_permission(self, request):
@@ -413,61 +355,3 @@ admin_site.register(HoaDon,HoaDonAdmin)
 # admin.site.register(ChiTietHoaDon,ChiTietHoaDonAdmin)
 admin_site.register(Danhgia,DanhGiaAdmin)
 admin_site.register(KhuyenMai,KhuyenMaiAdmin)
-
-# from django.db.models import Count
-# from django.shortcuts import render
-# from django.urls import path
-# from django.contrib import admin
-# from .models import User
-
-# def user_role_stats_view(request):
-#     role_stats = User.objects.values('role').annotate(count=Count('id'))
-#     context = {'role_stats': role_stats}
-#     return render(request, 'admin/user_role_stats.html', context)
-
-# admin.site.register_view('user-role-stats/', view=user_role_stats_view, name='User Role Statistics')
-# def hotel_by_tinh_view(request):
-#     hotel_stats = KhachSan.objects.values('tinh__tentinh').annotate(count=Count('id'))
-#     context = {'hotel_stats': hotel_stats}
-#     return render(request, 'admin/hotel_by_tinh.html', context)
-
-# admin.site.register_view('hotel-by-tinh/', view=hotel_by_tinh_view, name='Hotel by Tinh')
-# def room_by_hotel_view(request):
-#     room_stats = Phong.objects.values('khachsan__tenkhachsan').annotate(count=Count('id'))
-#     context = {'room_stats': room_stats}
-#     return render(request, 'admin/room_by_hotel.html', context)
-
-# admin.site.register_view('room-by-hotel/', view=room_by_hotel_view, name='Room by Hotel')
-# from django.db.models.functions import TruncMonth
-
-# def invoice_by_month_view(request):
-#     invoice_stats = HoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(count=Count('id'))
-#     context = {'invoice_stats': invoice_stats}
-#     return render(request, 'admin/invoice_by_month.html', context)
-
-# admin.site.register_view('invoice-by-month/', view=invoice_by_month_view, name='Invoice by Month')
-# from django.db.models import Sum
-
-# def revenue_by_month_view(request):
-#     revenue_stats = ChiTietHoaDon.objects.annotate(month=TruncMonth('created_date')).values('month').annotate(revenue=Sum('dongia'))
-#     context = {'revenue_stats': revenue_stats}
-#     return render(request, 'admin/revenue_by_month.html', context)
-
-# admin.site.register_view('revenue-by-month/', view=revenue_by_month_view, name='Revenue by Month')
-# from django.db.models import Avg
-
-# def hotel_rating_view(request):
-#     rating_stats = Danhgia.objects.values('hoadon__khachsan__tenkhachsan').annotate(avg_rating=Avg('diem'))
-#     context = {'rating_stats': rating_stats}
-#     return render(request, 'admin/hotel_rating.html', context)
-
-# admin.site.register_view('hotel-rating/', view=hotel_rating_view, name='Hotel Rating')
-# from django.utils import timezone
-
-# def current_promotions_view(request):
-#     current_date = timezone.now()
-#     promotions = KhuyenMai.objects.filter(thoigian_bd__lte=current_date, thoigian_kt__gte=current_date)
-#     context = {'promotions': promotions}
-#     return render(request, 'admin/current_promotions.html', context)
-
-# admin.site.register_view('current-promotions/', view=current_promotions_view, name='Current Promotions')

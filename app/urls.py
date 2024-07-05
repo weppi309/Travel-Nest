@@ -23,6 +23,7 @@ urlpatterns = [
     path('datphong/', views.datphong, name = "datphong"),
     path('dondatphong/', views.dondatphong, name = "dondatphong"),
     path('update-huyen-list/', views.update_huyen_list, name='update_huyen_list'),
+    path('admin_view/', views.admin_view, name='admin_view'),
     # path('custom-dashboard/', views.index, name='custom_dashboard'),
     # # path('custom-profile/', views.profile, name='custom_profile'),
     # path('customer-dashboard/', views.dashboard, name='customer_dashboard'),
