@@ -273,7 +273,16 @@ img{
 .text-overlay {
     position: absolute;
     top: 15%; /* Điều này đặt văn bản ở giữa theo chiều dọc */
-    left: 25%; /* Điều này đặt văn bản ở giữa theo chiều ngang */
+    left: 30%; /* Điều này đặt văn bản ở giữa theo chiều ngang */
+    transform: translate(-50%, -50%); /* Điều này căn chỉnh văn bản chính giữa */
+    padding: 10px; /* Khoảng cách giữa văn bản và biên của nó */
+    font-size: 18px; /* Cỡ chữ */
+    color: #fff; /* Màu chữ */
+}
+.text-overlay1 {
+    position: absolute;
+    top: 15%; /* Điều này đặt văn bản ở giữa theo chiều dọc */
+    left: 40%; /* Điều này đặt văn bản ở giữa theo chiều ngang */
     transform: translate(-50%, -50%); /* Điều này căn chỉnh văn bản chính giữa */
     padding: 10px; /* Khoảng cách giữa văn bản và biên của nó */
     font-size: 18px; /* Cỡ chữ */
