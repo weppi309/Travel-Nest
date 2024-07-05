@@ -10,7 +10,7 @@
     }
 
     .search-form-container {
-        flex: 0 0 250px; /* Đảm bảo form có chiều rộng cố định */
+        flex: 0 0 100px; /* Đảm bảo form có chiều rộng cố định */
     }
 
     .search-results-container {
@@ -30,14 +30,8 @@
     <span> > </span>
     <a>Kết quả tìm kiếm</a>
 </div>
-
-{% comment %} <div class='le' id="search-results">
-    {% include 'app/search_form.html' %}
-    <h3>{{ tentinh.tentinh }}: Tìm thấy {{ num_hotels_found }} chỗ nghỉ</h3>
-    {% include 'app/search_results.html' %}
-</div> {% endcomment %}
 <div class='le search-layout' id="search-results">
-    <div class='search-form-container'>
+    <div class=' search-form-container'>
         {% include 'app/search_form.html' %}
     </div>
     <div class='search-results-container' id="search-results">
